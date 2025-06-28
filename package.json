@@ -6,12 +6,13 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-    "format": "prettier --cache --write \"src/**/*.{ts,tsx}\"",
+    "lint": "eslint --cache --fix \"src/**/*.{ts,tsx}\"",
+    "format": "prettier --write \"src/**/*.{ts,tsx}\"",
     "prepare": "chmod ug+x .husky/*",
     "pre-commit": "lint-staged"
   },
   "dependencies": {
+    "@next/third-parties": "^15.3.4",
     "@types/glob": "^8.1.0",
     "dayjs": "^1.11.13",
     "gray-matter": "^4.0.3",
@@ -19,6 +20,8 @@
     "next": "15.2.1",
     "next-mdx-remote": "^5.0.0",
     "next-themes": "^0.4.6",
+    "posthog-js": "^1.255.1",
+    "posthog-node": "^5.1.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "reading-time": "^1.5.0"
@@ -41,6 +44,9 @@
     "typescript": "^5"
   },
   "lint-staged": {
-    "*.{ts,tsx}": "eslint --cache --fix prettier --write"
+    "*.{ts,tsx}": [
+      "eslint --cache --fix",
+      "prettier --write"
+    ]
   }
 }

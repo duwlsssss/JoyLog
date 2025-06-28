@@ -1,10 +1,10 @@
 // import PostListPage from '@/components/postList/PostLostPage';
 // import { getSortedPostList } from '@/lib/post';
 
-const Blog = async () => {
+const Main = async () => {
   // const postList = await getSortedPostList();
   // return <PostListPage postList={postList} />;
-  return <div>blog</div>;
+  return <div>메인</div>;
 };
 
-export default Blog;
+export default Main;
