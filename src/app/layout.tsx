@@ -1,13 +1,16 @@
 import type { Metadata } from 'next';
 
-import Toast from '@/components/ui/Toast';
-import { baseDomain, blogDesc, blogName, blogThumbnailURL } from '@/config/consts';
-import '@/config/globals.css';
 import Footer from '@/layouts/Footer';
 import Header from '@/layouts/Header';
-import ThemeProvider from '@/layouts/theme/Provider';
-import PostHogProvider from '@/lib/posthog/client';
+import ThemeProvider from '@/layouts/theme/ThemeProvider';
 import { GoogleAnalytics } from '@next/third-parties/google';
+
+import Toast from '@/components/ui/Toast';
+
+import PostHogProvider from '@/lib/posthog/client';
+
+import { baseDomain, blogDesc, blogName, blogThumbnailURL } from '@/config/consts';
+import '@/config/globals.css';
 
 export const metadata: Metadata = {
   metadataBase: new URL(baseDomain),
