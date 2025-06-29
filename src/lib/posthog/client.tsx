@@ -11,7 +11,8 @@ import { PostHogProvider as PHProvider, usePostHog } from 'posthog-js/react';
 const PostHogProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     posthog.init(process.env.NEXT_PUBLIC_POSTHOG_API_KEY!, {
-      api_host: 'https://us.i.posthog.com',
+      api_host: '/ingest',
+      ui_host: 'https://us.posthog.com',
       capture_pageview: false, // 수동 추적
       capture_pageleave: true, // 사용자가 페이지를 떠나는 이벤트 추적
     });
