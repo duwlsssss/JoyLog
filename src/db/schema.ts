@@ -1,7 +1,10 @@
-import { pgTable, serial, text, timestamp } from 'drizzle-orm/pg-core'
+import { integer, pgTable, serial, text, timestamp } from 'drizzle-orm/pg-core';
 
-export const todos = pgTable('todos', {
+export const posts = pgTable('posts', {
   id: serial('id').primaryKey(),
   title: text('title').notNull(),
-  createdAt: timestamp('created_at').defaultNow(),
-})
+  content: text('content').notNull(),
+  readingTime: integer('reading_time').default(1),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+});

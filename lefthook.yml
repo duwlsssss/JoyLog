@@ -1,0 +1,34 @@
+pre-commit:
+  parallel: false
+  commands:
+    eslint:
+      glob: "**/*.{cjs,mjs,js,ts,jsx,tsx}"
+      run: |
+        echo "🔍 Running ESLint on staged files..."
+        pnpm eslint {staged_files} --no-warn-ignored --cache
+      stage_fixed: true
+    prettier:
+      glob: "**/*.{cjs,mjs,js,ts,jsx,tsx,json,yaml,md,css}"
+      run: |
+        echo "💅 Running Prettier on staged files..."
+        pnpm format {staged_files}
+      stage_fixed: true
+    type-check:
+      run: |
+        echo "📝 Running TypeScript type checking..."
+        pnpm type-check
+
+commit-msg:
+  commands:
+    lint-message:
+      run: |
+        echo "📋 Validating commit message format..."
+        node scripts/run-commitlint.cjs {1}
+
+pre-push:
+  commands:
+    build:
+      run: |
+        echo "🚀 Starting build for push verification..."
+        pnpm build
+        echo "✅ Build completed successfully!"
