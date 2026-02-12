@@ -1,10 +1,6 @@
-import { integer, pgTable, serial, text, timestamp } from 'drizzle-orm/pg-core';
+import { integer, pgTable, text } from 'drizzle-orm/pg-core';
 
-export const posts = pgTable('posts', {
-  id: serial('id').primaryKey(),
-  title: text('title').notNull(),
-  content: text('content').notNull(),
-  readingTime: integer('reading_time').default(1),
-  createdAt: timestamp('created_at').defaultNow().notNull(),
-  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+export const postStats = pgTable('post_stats', {
+  slug: text('slug').primaryKey(), // 파일 이름 (예: 'my-first-post')
+  views: integer('views').default(0).notNull(),
 });
