@@ -1,6 +1,5 @@
-import { Card } from '@components/card';
-
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/tabs';
+import { Card } from '@components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@components/ui/tabs';
 
 export default function HomePage() {
   return (

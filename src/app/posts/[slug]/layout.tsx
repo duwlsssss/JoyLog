@@ -4,8 +4,8 @@ import type { Metadata } from 'next';
 
 import { getPostBySlug } from '@libs/posts';
 
-import { Comments } from '@components/Comments.client';
-import Spinner from '@components/Spinner';
+import { Comments } from '@components/posts/Comments.client';
+import Spinner from '@components/ui/Spinner';
 
 interface PostLayoutProps {
   children: React.ReactNode;

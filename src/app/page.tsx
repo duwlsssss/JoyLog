@@ -2,12 +2,14 @@ import Link from 'next/link';
 
 import { getAllPosts } from '@libs/posts';
 
+import Header from '@components/layout/header/Header';
+
 export default async function HomePage() {
   const posts = await getAllPosts();
 
   return (
-    <main className="mx-auto max-w-2xl py-20">
-      <h1 className="mb-8 text-3xl font-bold">JOY Blog</h1>
+    <main className="mx-auto max-w-6xl py-20">
+      <Header />
       <ul className="space-y-6">
         {posts.map((post) => (
           <li key={post.slug} className="border-b pb-4">

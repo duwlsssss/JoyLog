@@ -3,6 +3,8 @@ import localFont from 'next/font/local';
 
 import { cn } from '@libs/utils';
 
+import ThemeProvider from '@components/layout/ThemeProvider.client';
+
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -23,8 +25,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ko">
-      <body className={cn(pretendard.variable, 'font-pretendard antialiased')}>{children}</body>
+    <html lang="ko" suppressHydrationWarning>
+      <body className={cn(pretendard.variable, 'font-pretendard antialiased')}>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          {children}
+        </ThemeProvider>
+      </body>
     </html>
   );
 }
