@@ -4,6 +4,7 @@ import localFont from 'next/font/local';
 import { cn } from '@libs/utils';
 
 import ThemeProvider from '@components/layout/ThemeProvider.client';
+import Header from '@components/layout/header/Header';
 
 import './globals.css';
 
@@ -33,7 +34,10 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          {children}
+          <main className="mx-auto max-w-7xl px-5">
+            <Header />
+            {children}
+          </main>
         </ThemeProvider>
       </body>
     </html>
