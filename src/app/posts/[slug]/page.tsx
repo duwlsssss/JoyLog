@@ -12,7 +12,7 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
   incrementViews(slug).catch((err) => console.error(err));
 
   return (
-    <article className="prose lg:prose-xl mx-auto py-10">
+    <>
       <h1 className="text-gray-900">{post.metadata.title}</h1>
       <p className="text-gray-500">{post.metadata.date}</p>
       <div className="flex gap-x-1">
@@ -23,6 +23,6 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
         ))}
       </div>
       <ReactMarkdown remarkPlugins={[remarkGfm]}>{post.content}</ReactMarkdown>
-    </article>
+    </>
   );
 }

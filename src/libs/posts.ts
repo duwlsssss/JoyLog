@@ -1,3 +1,5 @@
+import { cache } from 'react';
+
 import fs from 'fs';
 import matter from 'gray-matter';
 import path from 'path';
@@ -7,7 +9,7 @@ const postsDirectory = path.join(process.cwd(), 'src/content/posts');
 /**
  * 슬러그를 기반으로 특정 포스트의 MDX 데이터를 파싱합니다.
  */
-export function getPostBySlug(slug: string) {
+export const getPostBySlug = cache((slug: string) => {
   const fullPath = path.join(postsDirectory, `${slug}.mdx`);
   const fileContents = fs.readFileSync(fullPath, 'utf8');
   const { data, content } = matter(fileContents);
@@ -17,7 +19,7 @@ export function getPostBySlug(slug: string) {
   const readingTime = Math.ceil(words / 200); // 분당 200단어 기준
 
   return { slug, metadata: data, content, readingTime };
-}
+});
 
 /**
  * 모든 posts(MDX) 데이터를 최신순으로 반환합니다.
