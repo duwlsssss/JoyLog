@@ -39,7 +39,7 @@ const config = {
     '^@hooks/(.*)$',
     '^@components/(.*)$',
     '^@constants/(.*)$',
-    '^@types/(.*)$',
+    '^@/types/(.*)$',
     '^@utils/(.*)$',
     '^@stores/(.*)$',
     '^@assets/(.*)$',
