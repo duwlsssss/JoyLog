@@ -6,14 +6,21 @@ import ModeToggle from './ModeToggle.client';
 
 export default function Header() {
   return (
-    <header className="justify-beetween flex items-center">
-      <Link href={ROUTES.ROOT}>
-        <h1 className="text-3xl font-bold">JOY Blog</h1>
-      </Link>
-      <div className="flex items-center gap-2">
-        <Link href={ROUTES.PORTFOLIO}>portfolio</Link>
-        <ModeToggle />
-      </div>
+    <header className="bg-header-fade sticky top-0 z-50 w-full">
+      <nav className="mx-auto flex items-center justify-between pt-5 pb-6">
+        <Link href={ROUTES.ROOT} className="transition-opacity hover:opacity-80">
+          <span className="text-2xl font-bold tracking-tight">JOY Blog</span>
+        </Link>
+        <div className="flex items-center gap-4">
+          <Link
+            href={ROUTES.PORTFOLIO}
+            className="text-muted-foreground hover:text-primary text-m font-semibold transition-colors"
+          >
+            Portfolio
+          </Link>
+          <ModeToggle />
+        </div>
+      </nav>
     </header>
   );
 }

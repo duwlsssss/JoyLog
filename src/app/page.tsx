@@ -8,11 +8,11 @@ export default async function HomePage() {
   const posts = await getAllPosts();
 
   return (
-    <main className="mx-auto max-w-6xl py-20">
+    <main className="mx-auto max-w-7xl px-5 pb-20">
       <Header />
       <ul className="space-y-6">
         {posts.map((post) => (
-          <li key={post.slug} className="border-b pb-4">
+          <li key={post.slug} className="border-t border-b py-4">
             <Link href={`/posts/${post.slug}`} className="group">
               <h2 className="text-xl font-semibold group-hover:text-blue-500">
                 {post.metadata.title}
