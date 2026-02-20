@@ -4,6 +4,7 @@ import localFont from 'next/font/local';
 import { cn } from '@libs/utils';
 
 import ThemeProvider from '@components/layout/ThemeProvider.client';
+import Footer from '@components/layout/footer/Footer';
 import Header from '@components/layout/header/Header';
 
 import './globals.css';
@@ -34,9 +35,10 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <main className="mx-auto max-w-7xl px-5">
+          <main className="mx-auto flex min-h-screen max-w-7xl flex-col px-5">
             <Header />
-            {children}
+            <main className="flex flex-1 flex-col">{children}</main>
+            <Footer />
           </main>
         </ThemeProvider>
       </body>

@@ -6,7 +6,7 @@ export default async function HomePage() {
   const posts = await getAllPosts();
 
   return (
-    <main className="pb-20">
+    <main>
       <ul className="space-y-6">
         {posts.map((post) => (
           <li key={post.slug} className="border-t border-b py-4">

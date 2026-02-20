@@ -47,7 +47,6 @@
   --radius-4xl: calc(var(--radius) + 16px);
 
   /* custom */
-  --header-height: 100px;
   --background-image-header-fade: linear-gradient(
     to bottom,
     var(--background) 0%,

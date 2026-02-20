@@ -6,7 +6,7 @@ import ModeToggle from './ModeToggle.client';
 
 export default function Header() {
   return (
-    <header className="bg-header-fade sticky top-0 z-10 h-(--header-height) w-full">
+    <header className="bg-header-fade sticky top-0 z-10 w-full py-6">
       <nav className="mx-auto flex h-full items-center justify-between">
         <Link href={ROUTES.ROOT} className="transition-opacity hover:opacity-80">
           <span className="text-2xl font-bold tracking-tight">JOY Blog</span>
