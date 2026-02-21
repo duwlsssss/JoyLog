@@ -12,7 +12,8 @@
     "format:check": "prettier --check '**/*.{cjs,mjs,js,ts,jsx,tsx,json,yaml,md,css}'",
     "format": "prettier --write '**/*.{cjs,mjs,js,ts,jsx,tsx,json,yaml,md,css}'",
     "type-check": "tsc --noEmit --incremental",
-    "prepare": "lefthook install"
+    "prepare": "lefthook install",
+    "db:push": "drizzle-kit push"
   },
   "dependencies": {
     "@giscus/react": "^3.1.0",

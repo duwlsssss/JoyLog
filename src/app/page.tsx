@@ -47,7 +47,7 @@ export default async function HomePage({
     <main className="flex flex-col gap-10">
       {/* 태그 제목 섹션 */}
       <section className="mt-10 flex flex-col gap-y-3">
-        <h2 className="text-3xl font-bold">
+        <h2 className="text-3xl font-bold tracking-tight">
           {selectedTag ? `${selectedTag} 포스트` : `모든 포스트`}
         </h2>
         <p className="text-primary text-lg font-medium">{totalPosts}개의 글</p>
