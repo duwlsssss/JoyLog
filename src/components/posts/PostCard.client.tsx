@@ -26,7 +26,7 @@ export default function PostCard({ post }: PostCardProps) {
   };
 
   return (
-    <li className="group relative flex flex-col gap-5 border-t border-b px-4 py-8">
+    <li className="group relative flex flex-col gap-5 border-b px-4 py-10">
       <Link href={`/posts/${slug}`} className="absolute inset-0 z-10">
         <span className="sr-only">포스트 읽기: {metadata.title}</span>
       </Link>
@@ -44,7 +44,7 @@ export default function PostCard({ post }: PostCardProps) {
         </div>
         <div className="flex items-center gap-1">
           <Clock className="size-4" />
-          <span>{metadata.readingTime}분 분량</span>
+          <span>{metadata.readingTime}분 읽기</span>
         </div>
       </div>
 
