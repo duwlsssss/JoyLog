@@ -57,15 +57,27 @@ export const mdxComponents: MDXRemoteProps['components'] = {
     <h3 className="mt-8 mb-4 text-xl font-semibold tracking-tight">{children}</h3>
   ),
   p: ({ children }) => {
-    // 자식 요소 중에 figure가 있는지 확인
-    const hasBlockElement = Children.toArray(children).some(
-      (child) => isValidElement(child) && child.type === 'figure',
-    );
+    // 자식 요소들을 배열로 변환
+    const childrenArray = Children.toArray(children);
 
+    // 블록 요소(이미지, 피규어 등)가 포함되어 있는지 체크
+    const hasBlockElement = childrenArray.some((child) => {
+      if (!isValidElement(child)) return false;
+
+      const type = child.type;
+      return (
+        type === 'figure' ||
+        type === 'img' ||
+        type === ZoomImage ||
+        (typeof type === 'function' && (type.name === 'img' || type.name === 'ZoomImage'))
+      );
+    });
+
+    // 블록 요소가 있다면 div로 감싸서 p 태그 중첩 에러 방지
     if (hasBlockElement) {
       return <div className="my-6">{children}</div>;
     }
-
+    // 일반 텍스트일 때만 p 태그 사용
     return <p className="leading-7 whitespace-pre-line not-first:mt-6">{children}</p>;
   },
   br: () => <div className="h-4" />,
