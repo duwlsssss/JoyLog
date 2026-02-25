@@ -1,9 +1,7 @@
 import type { ReactElement, ReactNode } from 'react';
 import { Children, isValidElement } from 'react';
 
-import type { Element } from 'hast';
 import type { MDXRemoteProps } from 'next-mdx-remote/rsc';
-import rehypePrettyCode from 'rehype-pretty-code';
 
 import CopyButton from '@components/posts/CopyButton.client';
 import ZoomImage from '@components/posts/ZoomImage.client';
@@ -145,23 +143,4 @@ export const mdxComponents: MDXRemoteProps['components'] = {
       {children}
     </a>
   ),
-};
-
-export const mdxOptions: MDXRemoteProps['options'] = {
-  mdxOptions: {
-    rehypePlugins: [
-      [
-        rehypePrettyCode,
-        {
-          theme: 'dark-plus',
-          // 빈 줄은 공백으로 유지
-          onVisitLine(node: Element) {
-            if (node.children.length === 0) {
-              node.children = [{ type: 'text', value: ' ' }];
-            }
-          },
-        },
-      ],
-    ],
-  },
 };

@@ -14,7 +14,7 @@ import PostNavigation from '@components/posts/PostNavigation';
 import ReadingProgressBar from '@components/posts/ReadingProgressBar.client';
 import ViewCounter from '@components/posts/ViewCounter';
 
-import { mdxComponents, mdxOptions } from '@constants/mdx';
+import { mdxComponents } from '@constants/mdx';
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -95,7 +95,6 @@ export default async function PostPage({ params }: Props) {
           },
         }}
       />
-      {/* <ReactMarkdown remarkPlugins={[remarkGfm]}>{post.content}</ReactMarkdown> */}
       {/* 하단 네비게이션 */}
       <footer className="not-prose mt-20">
         <PostNavigation prev={prev} next={next} />

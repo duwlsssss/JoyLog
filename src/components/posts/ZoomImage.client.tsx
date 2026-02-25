@@ -20,7 +20,7 @@ export default function ZoomImage({ src, alt, caption }: ZoomImageProps) {
 
   return (
     <>
-      <figure className="my-8 [&+figure]:-mt-10">
+      <figure className="my-8 [&+figure]:-mt-5">
         <div
           className="relative cursor-zoom-in overflow-hidden rounded-xl border border-white/10 shadow-md"
           onClick={() => setOpen(true)}
