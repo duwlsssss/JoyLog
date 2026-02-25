@@ -3,7 +3,9 @@ import { Suspense } from 'react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 
+import type { Element } from 'hast';
 import { MDXRemote } from 'next-mdx-remote/rsc';
+import rehypePrettyCode from 'rehype-pretty-code';
 
 import { incrementViews } from '@libs/actions';
 import { getAdjacentPosts, getPostBySlug } from '@libs/posts';
@@ -71,7 +73,28 @@ export default async function PostPage({ params }: Props) {
         </div>
       </header>
       {/* 본문 */}
-      <MDXRemote source={post.content} components={mdxComponents} options={mdxOptions} />
+      <MDXRemote
+        source={post.content}
+        components={mdxComponents}
+        options={{
+          mdxOptions: {
+            rehypePlugins: [
+              [
+                rehypePrettyCode,
+                {
+                  theme: 'dark-plus',
+                  // 빈 줄은 공백으로 유지
+                  onVisitLine(node: Element) {
+                    if (node.children.length === 0) {
+                      node.children = [{ type: 'text', value: ' ' }];
+                    }
+                  },
+                },
+              ],
+            ],
+          },
+        }}
+      />
       {/* <ReactMarkdown remarkPlugins={[remarkGfm]}>{post.content}</ReactMarkdown> */}
       {/* 하단 네비게이션 */}
       <footer className="not-prose mt-20">
