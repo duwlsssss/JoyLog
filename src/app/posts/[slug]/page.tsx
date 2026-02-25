@@ -47,8 +47,8 @@ export default async function PostPage({ params }: Props) {
     <article className="prose prose-slate dark:prose-invert max-w-none">
       <ReadingProgressBar />
       {/* 상단 정보 */}
-      <header className="not-prose mb-12 flex flex-col gap-5 border-b pb-10">
-        <h1 className="text-4xl font-extrabold tracking-tight">{post.metadata.title}</h1>
+      <header className="not-prose mb-12 flex flex-col gap-4 border-b pb-10">
+        <h1 className="text-2xl font-extrabold tracking-tight">{post.metadata.title}</h1>
         <div className="flex items-center gap-3 text-gray-500">
           <time>{post.metadata.date}</time>
           <span>•</span>
@@ -62,7 +62,7 @@ export default async function PostPage({ params }: Props) {
               key={tag}
               href={`/?tag=${tag}`}
               className={
-                'bg-secondary hover:bg-secondary/80 rounded-full px-4 py-1.5 text-lg font-medium transition-colors'
+                'bg-secondary hover:bg-secondary/80 rounded-full px-4 py-1.5 font-medium transition-colors'
               }
             >
               {tag}

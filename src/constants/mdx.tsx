@@ -48,13 +48,13 @@ export const mdxComponents: MDXRemoteProps['components'] = {
   VideoPlayer,
   // 제목 태그들에 스타일 입히기
   h1: ({ children }) => (
-    <h1 className="mt-12 mb-8 text-4xl font-extrabold tracking-tight">{children}</h1>
+    <h1 className="mt-12 mb-8 text-3xl font-extrabold tracking-tight">{children}</h1>
   ),
   h2: ({ children }) => (
-    <h2 className="mt-12 mb-4 text-3xl font-bold tracking-tight">{children}</h2>
+    <h2 className="mt-12 mb-4 text-2xl font-bold tracking-tight">{children}</h2>
   ),
   h3: ({ children }) => (
-    <h3 className="mt-8 mb-4 text-2xl font-semibold tracking-tight">{children}</h3>
+    <h3 className="mt-8 mb-4 text-xl font-semibold tracking-tight">{children}</h3>
   ),
   p: ({ children }) => {
     // 자식 요소 중에 figure가 있는지 확인
@@ -66,7 +66,7 @@ export const mdxComponents: MDXRemoteProps['components'] = {
       return <div className="my-6">{children}</div>;
     }
 
-    return <p className="text-lg leading-7 whitespace-pre-line not-first:mt-6">{children}</p>;
+    return <p className="leading-7 whitespace-pre-line not-first:mt-6">{children}</p>;
   },
   br: () => <div className="h-4" />,
   // 코드
@@ -100,7 +100,7 @@ export const mdxComponents: MDXRemoteProps['components'] = {
         </div>
 
         {/* 실제 코드 영역 */}
-        <pre {...props} className="text-m overflow-x-auto p-4 leading-6">
+        <pre {...props} className="overflow-x-auto p-4 text-sm leading-6">
           {children}
         </pre>
       </div>
@@ -118,7 +118,7 @@ export const mdxComponents: MDXRemoteProps['components'] = {
     </ol>
   ),
   li: ({ children }) => (
-    <li className="pl-1 text-lg leading-7">
+    <li className="pl-1 leading-7">
       <div className="[&_p]:mt-0">{children}</div>
     </li>
   ),

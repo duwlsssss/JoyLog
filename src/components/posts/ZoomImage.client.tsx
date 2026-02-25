@@ -26,7 +26,7 @@ export default function ZoomImage({ src, alt, caption }: ZoomImageProps) {
           <img src={src} alt={alt} className="h-auto w-full object-cover" />
         </div>
         {caption && (
-          <figcaption className="text-muted-foreground text-m mt-3 text-center">
+          <figcaption className="text-muted-foreground mt-3 text-center text-sm">
             {caption}
           </figcaption>
         )}

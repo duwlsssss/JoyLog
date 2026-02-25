@@ -44,20 +44,20 @@ export default async function HomePage({
   const tags = Object.entries(tagCounts).sort((a, b) => b[1] - a[1]);
 
   return (
-    <main className="flex flex-col gap-10">
+    <main className="flex flex-col gap-6">
       {/* 태그 제목 섹션 */}
-      <section className="mt-10 flex flex-col gap-y-3">
-        <h2 className="text-3xl font-bold tracking-tight">
+      <section className="mt-10 flex flex-col gap-y-2">
+        <h2 className="text-2xl font-bold tracking-tight">
           {selectedTag ? `${selectedTag} 포스트` : `모든 포스트`}
         </h2>
-        <p className="text-primary text-lg font-medium">{totalPosts}개의 글</p>
+        <p className="text-primary font-medium">{totalPosts}개의 글</p>
       </section>
       {/* 태그 목록 섹션 */}
       <section>
-        <div className="flex flex-wrap gap-3">
+        <div className="flex flex-wrap gap-2">
           <Link
             href="/"
-            className={`rounded-full px-4 py-1.5 text-lg font-medium transition-colors ${
+            className={`rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
               !selectedTag
                 ? 'bg-primary text-primary-foreground'
                 : 'bg-secondary text-secondary-foreground hover:bg-secondary/80'
@@ -69,7 +69,7 @@ export default async function HomePage({
             <Link
               key={tagName}
               href={`/?tag=${tagName}`}
-              className={`rounded-full px-4 py-1.5 text-lg font-medium transition-colors ${
+              className={`rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
                 selectedTag === tagName
                   ? 'bg-primary text-primary-foreground'
                   : 'bg-secondary text-secondary-foreground hover:bg-secondary/80'

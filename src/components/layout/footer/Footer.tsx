@@ -6,15 +6,15 @@ export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="mt-10 flex flex-col items-center justify-center gap-y-4 py-10">
+    <footer className="mt-10 flex flex-col items-center justify-center gap-y-3 py-10">
       {/* SNS 아이콘 섹션 */}
-      <div className="text-muted-foreground flex items-center gap-x-6">
+      <div className="text-muted-foreground flex items-center gap-x-4">
         <Link
           href="mailto:rladuwls0814@gmail.com"
           className="hover:text-foreground transition-colors"
           aria-label="Email"
         >
-          <Mail className="h-6 w-6" />
+          <Mail className="h-5 w-5" />
         </Link>
         <Link
           href="https://github.com/duwlsssss"
@@ -23,7 +23,7 @@ export default function Footer() {
           className="hover:text-foreground transition-colors"
           aria-label="GitHub"
         >
-          <Github className="h-6 w-6" />
+          <Github className="h-5 w-5" />
         </Link>
         <Link
           href="https://linkedin.com/in/여진-김-712033249"
@@ -32,11 +32,11 @@ export default function Footer() {
           className="hover:text-foreground transition-colors"
           aria-label="LinkedIn"
         >
-          <Linkedin className="h-6 w-6" />
+          <Linkedin className="h-5 w-5" />
         </Link>
       </div>
       {/* 카피라이트 섹션 */}
-      <div className="text-muted-foreground text-m font-medium">© {currentYear} JOY Blog</div>
+      <div className="text-muted-foreground font-medium">© {currentYear} JOY Blog</div>
     </footer>
   );
 }

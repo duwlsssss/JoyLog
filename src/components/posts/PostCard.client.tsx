@@ -26,18 +26,18 @@ export default function PostCard({ post }: PostCardProps) {
   };
 
   return (
-    <li className="group relative flex flex-col gap-5 border-b px-4 py-10">
+    <li className="group relative flex flex-col gap-y-2.5 border-b px-3 py-7">
       <Link href={`/posts/${slug}`} className="absolute inset-0 z-10">
         <span className="sr-only">포스트 읽기: {metadata.title}</span>
       </Link>
 
       {/* 제목 */}
-      <h2 className="text-4xl font-bold tracking-tight transition-all duration-300 group-hover:translate-x-1 group-hover:scale-[1.02]">
+      <h2 className="text-2xl font-bold tracking-tight transition-all duration-300 group-hover:translate-x-1 group-hover:scale-[1.02]">
         {metadata.title}
       </h2>
 
       {/* 메타 정보 (날짜, 읽기 시간) */}
-      <div className="text-muted-foreground text-m flex items-center gap-4">
+      <div className="text-muted-foreground flex items-center gap-3 text-sm">
         <div className="flex items-center gap-1">
           <Calendar className="size-4" />
           <time dateTime={metadata.date}>{metadata.date}</time>
@@ -59,7 +59,7 @@ export default function PostCard({ post }: PostCardProps) {
           <button
             key={tag}
             onClick={(e) => handleTagClick(e, tag)}
-            className="bg-secondary text-secondary-foreground hover:bg-primary hover:text-primary-foreground text-s cursor-pointer rounded-full px-3 py-1 font-medium transition-colors"
+            className="bg-secondary text-secondary-foreground hover:bg-primary hover:text-primary-foreground cursor-pointer rounded-full px-3 py-1 text-sm font-medium transition-colors"
           >
             {tag}
           </button>
