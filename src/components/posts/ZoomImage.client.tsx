@@ -2,6 +2,8 @@
 
 import { useState } from 'react';
 
+import Image from 'next/image';
+
 import Lightbox from 'yet-another-react-lightbox';
 import Zoom from 'yet-another-react-lightbox/plugins/zoom';
 
@@ -23,7 +25,14 @@ export default function ZoomImage({ src, alt, caption }: ZoomImageProps) {
           className="relative cursor-zoom-in overflow-hidden rounded-xl border border-white/10 shadow-md"
           onClick={() => setOpen(true)}
         >
-          <img src={src} alt={alt} className="h-auto w-full object-cover" />
+          <Image
+            src={src}
+            alt={alt ?? ''}
+            width={0}
+            height={0}
+            sizes="100vw"
+            className="h-auto w-full object-cover"
+          />
         </div>
         {caption && (
           <figcaption className="text-muted-foreground mt-3 text-center text-sm">
