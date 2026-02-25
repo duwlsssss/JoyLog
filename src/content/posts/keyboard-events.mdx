@@ -5,4 +5,188 @@ description: react에서 키보드 이벤트 알아두자
 tags: ['JS', 'React']
 ---
 
-본문
+피클 프로젝트 중 검색 기능에서 오류를 발견했다.
+의도한 검색 문자열과 다르게 검색이 실행됐다.
+예전에 윰씨 스터디하면서도 겪은 문제였는데 좀 더 자세히 문제를 알고 싶어 찾아봤다.
+
+<VideoPlayer
+  src="https://mcawm4stpvqmonk2.public.blob.vercel-storage.com/keyboard-events/%E1%84%91%E1%85%B5%E1%84%8F%E1%85%B3%E1%86%AF%E1%84%80%E1%85%A5%E1%86%B7%E1%84%89%E1%85%A2%E1%86%A8%E1%84%8B%E1%85%A9%E1%84%85%E1%85%B2.mp4"
+  caption="검색어 입력 중 엔터를 누르면 잘려서 검색된다."
+/>
+
+## Keyboard Events
+
+---
+
+### 1️⃣ `onKeyDown`
+
+`onKeyDown?: KeyboardEventHandler<T> | undefined;`
+
+- 키보드를 눌렀을 때 바로 실행됨
+- 키보드를 계속 꾹 누르면 계속 실행됨
+- 용도
+  - Enter 처리
+  - 단축키
+  - 게임 조작
+
+### 2️⃣ `onKeyUp`
+
+`onKeyUp?: KeyboardEventHandler<T> | undefined;`
+
+- 키보드를 누르고 땠을 때 실행
+- 키보드를 계속 누르면 실행x
+- 용도
+  - 키 떼는 순간 처리
+  - 연속 입력이 싫을 때
+
+### 3️⃣ `onKeyPress` (deprecated)
+
+`onKeyPress?: KeyboardEventHandler<T> | undefined;`
+
+- keydown과 동작방식이 유사
+- Ctrl, Alt, Tab, Shift 등 특수키들은 인식 못함, 문자 입력 전용키임, 브라우저마다 동작이 다름 등의 이유로 이제 사용X
+
+### ➡️ 키를 누르는 순간 바로 반응해야 하는 경우가 많아 `onKeyDown` 이벤트를 가장 많이 사용함
+
+## [이벤트 객체](https://developer.mozilla.org/ko/docs/Web/API/KeyboardEvent)
+
+---
+
+`key`랑 `code` 프로퍼티를 자주 사용한다.
+
+`key`는 실제 입력된 값이고,
+`code`는 키보드의 물리적인 위치이다.
+
+그래서 일반적인 UI 입력에는 `key`를 쓰고,
+게임 조작이나 단축키처럼 위치가 중요한 경우에는 `code`를 쓴다.
+
+## IME 이슈
+
+---
+
+한글 입력 중에 Enter 키를 눌렀는데, submit이 두 번 되는 버그, 화면에 보이는 문자와
+자바스크립트에서 읽는 value가 달랐던 경험이 한 번쯤 있을 것이다.
+
+핵심부터 말하면
+**“조합 중인 글자는 아직 '확정(Commit)'되지 않은 임시 데이터”**
+라는 **IME의 동작 방식** 때문이다.
+
+IME는 Input Method Editor의 약자로,
+사용자가 하나 이상의 키 입력을 조합해 문자를 입력할 수 있게 해주는 시스템이다.
+
+한글, 일본어, 중국어같은 조합형 언어는 키보드 입력이 즉시 문자로 확정되지 않는다.
+
+OS 레벨의 IME가 조합 과정을 담당하고
+브라우저는 이를 composition event 형태로 전달받는다.
+
+![IME 입력 과정 설명 이미지1](https://mcawm4stpvqmonk2.public.blob.vercel-storage.com/keyboard-events/ime1.png)
+![IME 입력 과정 설명 이미지2](https://mcawm4stpvqmonk2.public.blob.vercel-storage.com/keyboard-events/ime2.png)
+
+이를 바탕으로 **이벤트의 중복,** **입력 값 불일치** 문제를 알아보자
+
+### **1️⃣ Enter 시 중복 실행**
+
+사용자가 Enter(특정 키)를 누르는 순간, 브라우저는 두 가지 명령을 동시에 수행한다.
+
+1. **CompositionEnd:** 지금까지 조합 중이던 글자를 최종 데이터로 확정해!
+2. **KeyDown (Enter):** 사용자가 엔터 키를 눌렀으니 로직을 실행해!
+
+**문제는 일부 환경에선** `CompositionEnd` 를 로직 호출 신호로 오해한다는 점이다. 그리고 뒤따라오는 일반적인 물리 키 입력인 `KeyDown` 이벤트에서 또 한 번 로직이 호출되면서 중복 호출이 발생한다.
+
+**글자를 확정 짓기 위한 엔터**와 **명령을 내리기 위한 엔터**를 브라우저가 명확히 분리하지 못하는 것이다.
+
+✅ 두 이벤트가 각각 핸들러를 호출해서 생기는 **타이밍**의 문제이다.
+
+![IME 타이밍 설명 이미지](https://mcawm4stpvqmonk2.public.blob.vercel-storage.com/keyboard-events/ime%E1%84%90%E1%85%A1%E1%84%8B%E1%85%B5%E1%84%86%E1%85%B5%E1%86%BC%E1%84%89%E1%85%A5%E1%86%AF%E1%84%86%E1%85%A7%E1%86%BC%E1%84%8B%E1%85%B5%E1%84%86%E1%85%B5%E1%84%8C%E1%85%B5.png)
+
+### **2️⃣ 입력 값 불일치**
+
+내 경우처럼
+
+- 화면에서는 `소소ㅅ`처럼 보이는데
+- JS에서 읽으면 `소소`인 문제가 생기는 것은
+
+키보드 이벤트만을 기준으로 로직을 작성하면
+
+조합 중인 입력을 정상 입력으로 잘못 판단하는 문제가 생기는 것이다.
+
+✅ 자바스크립트가 값을 읽는 시점에서 `CompositionEnd`가 **아직 호출되지 않아서** 생기는 **데이터 확정성**의 문제이다.
+
+### 해결법
+
+---
+
+### 💡 **`onCompositionEnd`** 상태를 코드에서 감지해야한다.
+
+`KeyboardEvent<HTMLInputElement>.nativeEvent.isComposing`은
+현재 키보드 이벤트가 IME 조합 중에 발생했는지를 알려준다.
+
+조합 중이면 `true`,
+조합이 끝난 상태에서 발생한 이벤트면 `false` 이다.
+
+이를 이용해 isComposing이 false일때만 로직을 실행하도록 분기 처리를 해야한다.
+한글을 사용하는 서비스라면 이 처리는 필수이다.
+
+```tsx
+const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+  // Enter 키이면서, isComposing이 false일 때만 handleSearch 실행
+  if (e.key === 'Enter' && !e.nativeEvent.isComposing) {
+    handleSearch();
+  }
+};
+
+<input
+  value={inputValue}
+  onChange={handleChange}
+  onKeyDown={handleKeyDown}
+  placeholder={`관심 있는 ${pageContextType === PageContextType.EVENT ? '활동' : '게시물'} 검색`}
+  className="w-full text-gray-900 outline-none placeholder:text-gray-400"
+  autoComplete="off"
+  enterKeyHint="search"
+/>;
+```
+
+이게 제일 간단한 해결법이고
+
+**`isComposing` 상태를 직접 관리하는 방식도 있다**
+
+```tsx
+const [isComposing, setIsComposing] = useState(false);
+
+const handleKeyDown = async (e: React.KeyboardEvent<HTMLInputElement>) => {
+  if (isComposing) return;
+  if (e.key === 'Enter') {
+    // submit / search
+  }
+};
+
+<input
+  onCompositionStart={() => setIsComposing(true)}
+  onCompositionEnd={() => setIsComposing(false)}
+  onKeyDown={handleKeyDown}
+/>;
+```
+
+- **IME 조합 상태를 명시적으로 추적**
+- 장점
+  - 브라우저 / React 버전에 덜 의존적입
+- 단점
+  - 상태 관리 코드가 늘어남
+  - `onComposition` 이벤트를 직접 다뤄야 함
+
+### 결론
+
+---
+
+- keypress는 쓰지 말기
+- key와 code를 구분해서 사용하자
+- 키보드 이벤트를 제대로 처리하지 않으면
+  UX 문제이자 접근성 문제로 이어진다.
+  **isComposing** 체크를 습관처럼 넣자!!!
+
+### 참고자료
+
+---
+
+- [[JavaScript] 키보드 이벤트](https://rlawo32.tistory.com/entry/JavaScript-%ED%82%A4%EB%B3%B4%EB%93%9C-%EC%9D%B4%EB%B2%A4%ED%8A%B8#google_vignette)
+- [[10분 테코톡] 메이토의 키보드 이벤트](https://www.youtube.com/watch?v=t137l7AfmTg&t=9s)

@@ -1,9 +1,9 @@
 import { Suspense } from 'react';
 
 import type { Metadata } from 'next';
+import Link from 'next/link';
 
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
+import { MDXRemote } from 'next-mdx-remote/rsc';
 
 import { incrementViews } from '@libs/actions';
 import { getAdjacentPosts, getPostBySlug } from '@libs/posts';
@@ -11,6 +11,8 @@ import { getAdjacentPosts, getPostBySlug } from '@libs/posts';
 import PostNavigation from '@components/posts/PostNavigation';
 import ReadingProgressBar from '@components/posts/ReadingProgressBar.client';
 import ViewCounter from '@components/posts/ViewCounter';
+
+import { mdxComponents, mdxOptions } from '@constants/mdx';
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -56,14 +58,21 @@ export default async function PostPage({ params }: Props) {
         </div>
         <div className="flex flex-wrap gap-2">
           {post.metadata.tags.map((tag: string) => (
-            <span key={tag} className="bg-secondary rounded-full px-3 py-1 text-sm font-medium">
+            <Link
+              key={tag}
+              href={`/?tag=${tag}`}
+              className={
+                'bg-secondary hover:bg-secondary/80 rounded-full px-4 py-1.5 text-lg font-medium transition-colors'
+              }
+            >
               {tag}
-            </span>
+            </Link>
           ))}
         </div>
       </header>
       {/* 본문 */}
-      <ReactMarkdown remarkPlugins={[remarkGfm]}>{post.content}</ReactMarkdown>
+      <MDXRemote source={post.content} components={mdxComponents} options={mdxOptions} />
+      {/* <ReactMarkdown remarkPlugins={[remarkGfm]}>{post.content}</ReactMarkdown> */}
       {/* 하단 네비게이션 */}
       <footer className="not-prose mt-20">
         <PostNavigation prev={prev} next={next} />
