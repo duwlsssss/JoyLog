@@ -12,7 +12,6 @@ import { SITE_URL } from '@constants/metadata';
 import './globals.css';
 
 export const metadata: Metadata = {
-  metadataBase: new URL(SITE_URL!),
   title: 'Joy 개발 블로그',
   description: '프론트엔드 개발자 Joy의 기술 블로그 및 포트폴리오입니다.',
   verification: {
