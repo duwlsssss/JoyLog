@@ -12,6 +12,9 @@ import './globals.css';
 export const metadata: Metadata = {
   title: '김여진 개발 블로그',
   description: '블로그 글과 포트폴리오를 확인해보세요.',
+  verification: {
+    google: process.env.GOOGLE_SEARCH_CONSOLE_TXT,
+  },
 };
 
 const pretendard = localFont({

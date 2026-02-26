@@ -3,7 +3,7 @@ import type { MetadataRoute } from 'next';
 import { getAllPosts } from '@libs/posts';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://joy-log-kappa.vercel.app';
+  const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://joy-log-kappa.vercel.app';
   const posts = await getAllPosts();
 
   const postUrls = posts.map((post) => ({
