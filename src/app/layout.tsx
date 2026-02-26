@@ -13,7 +13,10 @@ export const metadata: Metadata = {
   title: '김여진 개발 블로그',
   description: '블로그 글과 포트폴리오를 확인해보세요.',
   verification: {
-    google: process.env.GOOGLE_SEARCH_CONSOLE_TXT,
+    google: '1jqmLvEWq1LYpWFt7d1HBdZ9UXk_ZYbGylY48zln9pM',
+  },
+  other: {
+    'naver-site-verification': '72ceb204b618147c9c3b2dc2c8cacdceb5e39a9f',
   },
 };
 
