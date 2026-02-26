@@ -15,7 +15,7 @@ export const metadata: Metadata = {
   title: 'Joy 개발 블로그',
   description: '프론트엔드 개발자 Joy의 기술 블로그 및 포트폴리오입니다.',
   verification: {
-    google: '1jqmLvEWq1LYpWFt7d1HBdZ9UXk_ZYbGylY48zln9pM',
+    google: 'X9PrAex_Szp4PQuR1iLdWmhWqdREcsn6qjAr-UBxgac',
   },
   other: {
     'naver-site-verification': '72ceb204b618147c9c3b2dc2c8cacdceb5e39a9f',
