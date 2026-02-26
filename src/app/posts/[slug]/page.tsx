@@ -15,6 +15,7 @@ import ReadingProgressBar from '@components/posts/ReadingProgressBar.client';
 import ViewCounter from '@components/posts/ViewCounter';
 
 import { mdxComponents } from '@constants/mdx';
+import { SITE_URL } from '@constants/metadata';
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -26,13 +27,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   return {
     title: `${post.metadata.title} | JoyLog`,
-    description: `${post.metadata.title} 포스트 읽기`,
+    description: post.metadata.description ?? `${post.metadata.title} 포스트 읽기`,
     openGraph: {
       title: post.metadata.title,
-      description: post.metadata.description,
+      description: post.metadata.description ?? `${post.metadata.title} 포스트 읽기`,
       type: 'article',
       publishedTime: post.metadata.date,
       authors: ['Joy'],
+      url: `${SITE_URL}/posts/${slug}`,
     },
   };
 }
