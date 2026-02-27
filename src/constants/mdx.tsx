@@ -46,13 +46,13 @@ export const mdxComponents: MDXRemoteProps['components'] = {
   VideoPlayer,
   // 제목 태그들에 스타일 입히기
   h1: ({ children }) => (
-    <h1 className="mt-12 mb-8 text-3xl font-extrabold tracking-tight">{children}</h1>
+    <h1 className="mt-12 mb-8 text-3xl font-extrabold tracking-tight break-keep">{children}</h1>
   ),
   h2: ({ children }) => (
-    <h2 className="mt-12 mb-4 text-2xl font-bold tracking-tight">{children}</h2>
+    <h2 className="mt-12 mb-4 text-2xl font-bold tracking-tight break-keep">{children}</h2>
   ),
   h3: ({ children }) => (
-    <h3 className="mt-8 mb-4 text-xl font-semibold tracking-tight">{children}</h3>
+    <h3 className="mt-8 mb-4 text-xl font-semibold tracking-tight break-keep">{children}</h3>
   ),
   p: ({ children }) => {
     // 자식 요소들을 배열로 변환
@@ -73,10 +73,10 @@ export const mdxComponents: MDXRemoteProps['components'] = {
 
     // 블록 요소가 있다면 div로 감싸서 p 태그 중첩 에러 방지
     if (hasBlockElement) {
-      return <div className="my-6">{children}</div>;
+      return <div className="my-6 break-keep">{children}</div>;
     }
     // 일반 텍스트일 때만 p 태그 사용
-    return <p className="leading-7 whitespace-pre-line not-first:mt-6">{children}</p>;
+    return <p className="leading-7 break-keep whitespace-pre-line not-first:mt-6">{children}</p>;
   },
   br: () => <div className="h-4" />,
   // 코드
@@ -128,7 +128,7 @@ export const mdxComponents: MDXRemoteProps['components'] = {
     </ol>
   ),
   li: ({ children }) => (
-    <li className="pl-1 leading-7">
+    <li className="pl-1 leading-7 break-keep">
       <div className="[&_p]:mt-0">{children}</div>
     </li>
   ),
@@ -138,7 +138,7 @@ export const mdxComponents: MDXRemoteProps['components'] = {
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      className="decoration-primary/30 hover:text-primary hover:decoration-primary underline underline-offset-4 transition-colors"
+      className="decoration-primary/30 hover:text-primary hover:decoration-primary break-keep underline underline-offset-4 transition-colors"
     >
       {children}
     </a>
