@@ -9,7 +9,9 @@ export function VideoPlayer({ src, caption }: { src: string; caption?: string })
           브라우저가 비디오 재생을 지원하지 않습니다.
         </video>
       </div>
-      {caption && <figcaption className="text-muted-foreground text-sm">{caption}</figcaption>}
+      {caption && (
+        <figcaption className="text-muted-foreground text-sm break-keep">{caption}</figcaption>
+      )}
     </figure>
   );
 }

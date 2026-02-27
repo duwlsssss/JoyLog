@@ -73,7 +73,7 @@ export const mdxComponents: MDXRemoteProps['components'] = {
 
     // 블록 요소가 있다면 div로 감싸서 p 태그 중첩 에러 방지
     if (hasBlockElement) {
-      return <div className="my-6 break-keep">{children}</div>;
+      return <div className="my-6">{children}</div>;
     }
     // 일반 텍스트일 때만 p 태그 사용
     return <p className="leading-7 break-keep whitespace-pre-line not-first:mt-6">{children}</p>;
@@ -87,8 +87,9 @@ export const mdxComponents: MDXRemoteProps['components'] = {
       <code
         {...props}
         className={
-          isInline &&
-          'relative rounded bg-gray-200 px-[0.3rem] py-[0.2rem] font-mono font-semibold dark:bg-zinc-700/70 dark:text-zinc-100'
+          isInline
+            ? 'relative rounded bg-gray-200 px-[0.3rem] py-[0.2rem] font-mono font-semibold dark:bg-zinc-700/70 dark:text-zinc-100'
+            : undefined
         }
       >
         {children}

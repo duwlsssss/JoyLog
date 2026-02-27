@@ -35,7 +35,7 @@ export default function ZoomImage({ src, alt, caption }: ZoomImageProps) {
           />
         </div>
         {caption && (
-          <figcaption className="text-muted-foreground mt-3 text-center text-sm">
+          <figcaption className="text-muted-foreground mt-3 text-center text-sm break-keep">
             {caption}
           </figcaption>
         )}
