@@ -1,0 +1,217 @@
+---
+title: 'CORS'
+date: '2025-02-28'
+description: CORS error 정확히 말하자
+tags: ['CORS']
+---
+
+개발하면서 한번쯤은 `CORS`에러를 마주쳤을 것이다.
+`Access-Control-Allow-Origin` 헤더가 없다는 메시지와 함께 데이터가 오지 않아 답답했던 경험이 있을 것이다.
+CORS가 무엇이고, 왜 존재하며, 에러가 발생했을 때 두려움을 느끼지 않고자 이 글을 쓴다.
+
+---
+
+## CORS(Cross-Origin Resource Sharing)
+
+---
+
+1. origin (출처)
+   URL의 프로토콜, 호스트, 포트 3가지를 조합한 것
+   **모두 같으면** 출처가 같다, 하나라도 **다르면** 출처가 다르다고 표현한다.
+
+2. Cross-Origin Request (교차 출처 요청)
+   다른 출처의 자원을 사용하기 위해 네트워크 요청을 만드는 것
+   **`Same-Origin Policy (동일 출처 정책)`** 으로 브라우저는 실행 중인 애플리케이션의 출처와 다른 출처의 자원을 요청하면 이를 차단한다.
+   이를 허용하려면 서버와 약속 - `CORS`를 해야한다.
+
+3. CORS의 동작 원리
+   `3000` 번 포트에서 `3001`번 포트로 응답을 보내고 받게한다.
+
+   ```tsx
+   // index.html
+   <body>
+       <script>
+         const init = async () => {
+   	      // 3001번 포트에서 데이터 가져오기
+           const response = await fetch("http://localhost:3001/resource.json");
+           const data = await response.text();
+
+           const jsonElement = document.createElement("pre");
+           jsonElement.textContent = data;
+           document.body.appendChild(jsonElement);
+         };
+
+         // DOM 로드 완료 후 init 함수 실행
+         document.addEventListener("DOMContentLoaded", init);
+       </script>
+     </body>
+   ```
+
+   ```tsx
+   // server1.js
+   const http = require('http');
+   const path = require('path');
+   const serveStatic = require('serve-static');
+
+   const staticHandler = serveStatic(path.join(__dirname, 'public'));
+   const handler = (req, res) => {
+     staticHandler(req, res, () => {
+       res.statusCode = 404;
+       res.end('Not Found');
+     });
+   };
+
+   const server1 = http.createServer(handler);
+   const port1 = 3000;
+   server1.listen(port1, () => console.log(`🚀 Primary server is running ::${port1}`));
+
+   // server1.js
+   // 동일 ...
+
+   const server2 = http.createServer(handler);
+   const port2 = 3001;
+   server2.listen(port2, () => console.log(`🚀 Secondary server is running ::${port2}`));
+   ```
+
+   ![3000 포트로 접근시 결과](https://mcawm4stpvqmonk2.public.blob.vercel-storage.com/CORS/accessTo3000port.png)
+
+   **🤔 CORS 에러 분석**
+
+   `3000`번 포트에서 `동일 출처 정책`으로 인해 `3000`번 포트가 아닌 `3001`번 포트를 사용하는 서버의 리소스가 차단됐다.
+
+   원인은 [`Access-Control-Allow-Origin`](https://developer.mozilla.org/ko/docs/Web/HTTP/Headers/Access-Control-Allow-Origin) 헤더가 없기 때문이다.
+
+   브라우저는 다른 출처로 요청을 보낼 때:
+   1. 응답 헤더 중 `Access-Control-Allow-Origin`을 확인
+   2. 이 헤더의 값이 **현재 브라우저가 실행 중인 애플리케이션의 출처**와 일치하는지 확인
+
+   서버 `3001`은 아직 응답 헤더를 명시하지 않았기 때문에, 브라우저는 자원 사용을 허용하지 않은 것으로 판단하여 네트워크 오류를 발생시킨다.
+
+   **💡 서버 `3001`이 서버`3000` 에게 자원을 공유하게 `Access-Control-Allow-Origin` 헤더를 설정해보자**
+
+   ```tsx
+   // server2.js
+   // ...
+   const staticHandler = serveStatic(path.join(__dirname, 'public'));
+   const handler = (req, res) => {
+     // 💡 localhost:3000 출처를 허용
+     res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
+     staticHandler(req, res, () => {
+       res.statusCode = 404;
+       res.end('Not Found');
+     });
+   };
+   ```
+
+   ![Access-Control-Allow-Origin 설정 후 정상 처리.png](https://mcawm4stpvqmonk2.public.blob.vercel-storage.com/CORS/afterSetHeader.png)
+
+   정상적으로 네트워크 전송이 전달된 것을 볼 수 있다.
+   브라우저는 “서버가 `3000` 번 포트의 출처도 이 자원을 사용할 수 있다고 허락했군”이라고 판단해 응답 사용을 허락한다.
+
+   한 번 더 정리해보면
+   **브라우저**는 다른 출처의 자원을 사용하기 위해 HTTP 요청을 만들 때 [**`Origin`**](https://developer.mozilla.org/ko/docs/Web/HTTP/Reference/Headers/Origin) 헤더에 현재 출처를 실어서 보낸다:
+
+   ![client header.png](https://mcawm4stpvqmonk2.public.blob.vercel-storage.com/CORS/clientHeader.png)
+
+   브라우저가 서버에게 “나의 출처는 이곳이니, 당신의 자원을 사용해도 되나요?”라고 묻는 것이다.
+
+   **서버**는 자원을 제공하겠다는 의미로 응답 헤더에 **`Access-Control-Allow-Origin`**을 포함시킨다:
+
+   ![server header.png](https://mcawm4stpvqmonk2.public.blob.vercel-storage.com/CORS/serverHeader.png)
+
+   응답을 받은 브라우저는 이 헤더에 **자신의 출처가 포함되어 있는지** 확인하고,
+   포함되어 있다면 “서버가 자원 사용을 허락했다”고 판단하여 응답을 사용한다.
+
+**4. CORS 요청 종류**
+
+- 단순 요청 (Simple Request)
+
+  **두 가지 조건** 만족 필요
+  1. 허용된 HTTP 메소드 사용
+     - [**`GET`**](https://developer.mozilla.org/ko/docs/Web/HTTP/Methods/GET)
+     - [**`POST`**](https://developer.mozilla.org/ko/docs/Web/HTTP/Reference/Methods/POST)
+     - [**`HEAD`**](https://developer.mozilla.org/ko/docs/Web/HTTP/Methods/HEAD)
+  2. 안전한 헤더 사용
+     - [**`Accept`**](https://developer.mozilla.org/ko/docs/Web/HTTP/Headers/Accept)
+     - [**`Accept-Language`**](https://developer.mozilla.org/ko/docs/Web/HTTP/Headers/Accept-Language)
+     - [**`Content-Language`**](https://developer.mozilla.org/ko/docs/Web/HTTP/Headers/Content-Language)
+     - [**`Content-Type`**](https://developer.mozilla.org/ko/docs/Web/HTTP/Headers/Content-Type)
+     - [**`Range`**](https://developer.mozilla.org/ko/docs/Web/HTTP/Headers/Range)
+
+  브라우저에서 교차 출처 요청을 할 때 **이외의 헤더를 사용**하면,
+  출처 확인과 마찬가지로 **헤더 사용 여부**도 서버에게 확인받아야 한다.
+
+  브라우저에서 동작하는 스크립트에 커스텀 헤더를 추가해보면:
+
+  ![커스텀 헤더 추가시.png](https://mcawm4stpvqmonk2.public.blob.vercel-storage.com/CORS/addCustomHeader.png)
+
+  [**`Access-Control-Allow-Headers`**](https://developer.mozilla.org/ko/docs/Web/HTTP/Headers/Access-Control-Allow-Headers)에 헤더 **`X-Dodam`** 이 허용되지 않았다고 뜬다.
+
+  ➡️ 커스텀 헤더를 쓰기 위해선 서버가 [**`Access-Control-Allow-Headers`**](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Access-Control-Allow-Headers) 응답 헤더에 허용할 헤더 이름을 명시해야 한다:
+
+  ```tsx
+  // server2.js
+  // ...
+  const handler = (req, res) => {
+    res.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
+    // X-Dodam 헤더를 허용
+    res.setHeader("Access-Control-Allow-Headers", "X-Dodam");
+    // ...
+  ```
+
+- **사전 요청 (Preflight Request)**
+  단순한 요청에 해당하는 **`GET`**, **`POST`**, **`HEAD`** 메소드가 아닌 **`PUT`**, **`PATCH`**, **`DELETE`** 메소드를 사용하는 경우
+  서버는 **요청을 보낸 측이 브라우저가 아닐 수도 있다**고 판단한다.
+  따라서 브라우저와 서버는 서로를 확인하기 위한 **`사전 요청(Preflight Request)`**을 먼저 주고받는다.
+  브라우저에서 동작하는 스크립트의 메소드를 `PUT`으로 변경해보자:
+  ![메소드를 PUT으로 변경.png](https://mcawm4stpvqmonk2.public.blob.vercel-storage.com/CORS/changeMethodToPut.png)
+  [**`Access-Control-Allow-Methods`**](https://developer.mozilla.org/ko/docs/Web/HTTP/Headers/Access-Control-Allow-Methods)에 `PUT` 메소드가 없다고 표시된다.
+  **✏️ preflight 요청 분석**
+  ![preflight 요청 1.png](https://mcawm4stpvqmonk2.public.blob.vercel-storage.com/CORS/preflight_1.png)
+  ![preflight 요청 2.png](https://mcawm4stpvqmonk2.public.blob.vercel-storage.com/CORS/preflight_2.png)
+  사전 요청은 다음과 같은 특징을 가진다:
+  - **메소드**: [**`OPTIONS`**](https://developer.mozilla.org/ko/docs/Web/HTTP/Methods/OPTIONS)를 사용
+  - **URL**: 실제 요청과 동일한 주소
+  - **요청 헤더**: [**`Access-Control-Request-Method`**](https://developer.mozilla.org/ko/docs/Web/HTTP/Headers/Access-Control-Request-Method)에 사용하려는 메소드(**`PUT`**)를 명시
+    브라우저는 “교차 출처로 **`PUT`** 메소드를 사용해도 되나요?”라고 서버에게 먼저 확인하는 것이다.
+    서버가 다른 출처에서 **`PUT`** 메소드를 허용하려면 **`Access-Control-Allow-Methods`** 응답 헤더를 설정해야 한다:
+
+  ```tsx
+  // server2.js
+  // ...
+  const handler = (req, res) => {
+    res.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
+    res.setHeader("Access-Control-Allow-Headers", "X-Dodam");
+    // PUT 메소드를 허용
+    res.setHeader('Access-Control-Allow-Methods', 'PUT');
+    // ...
+  ```
+
+  **사전 요청과 실제 요청의 흐름**
+  1. **사전 요청(OPTIONS)**:
+     - 요청: **`Access-Control-Request-Method: PUT`**
+     - 응답: **`Access-Control-Allow-Methods: PUT`**
+     - 서버가 **`PUT`** 메소드 사용을 허용함을 알림
+  2. **실제 요청(PUT)**:
+
+     실제 **`PUT`** 요청이 전송되고, 응답 본문도 정상적으로 수신된다.
+     브라우저는 “서버가 **`PUT`** 메소드를 허용했구나”라고 판단하여 애플리케이션에서 응답을 사용할 수 있도록 허용한다.
+
+1. **주요 CORS 사용 요청**
+   CORS를 사용하는 요청은 특정 API와 리소스에 한정된다.
+   - [**`Fetch API`**](https://developer.mozilla.org/ko/docs/Web/API/Fetch_API): 앞에서 다룬 fetch 함수
+   - [**`XMLHttpRequest(XHR)`**](https://developer.mozilla.org/ko/docs/Web/API/XMLHttpRequest): 비동기 HTTP 요청
+   - [**`@font-face`**](https://developer.mozilla.org/ko/docs/Web/CSS/@font-face): CSS에서 웹 폰트를 로드할 때
+   - [**`WebGL 텍스처`**](https://developer.mozilla.org/ko/docs/Web/API/WebGL_API): 다른 도메인의 이미지를 텍스처로 사용할 때
+   - [**`Canvas drawImage`**](https://developer.mozilla.org/ko/docs/Web/API/CanvasRenderingContext2D/drawImage): 다른 출처의 이미지를 캔버스에 그릴 때
+2. CORS 오류 발생시 확인하자!
+   - **출처가 다른가?**
+   - **요청 종류가 무엇인가? (Simple vs. Preflight)**
+   - **서버가 필요한 `Access-Control-Allow-*` 헤더를 설정했는가?**
+
+### 참고자료
+
+---
+
+- [CORS 허용 목록에 있는 요청 헤더 (CORS-safelisted request header) - MDN Web Docs 용어 사전: 웹 용어 정의 | MDN](https://developer.mozilla.org/ko/docs/Glossary/CORS-safelisted_request_header)
+- [교차 출처 리소스 공유 (CORS) - HTTP | MDN](https://developer.mozilla.org/ko/docs/Web/HTTP/Guides/CORS#%EC%96%B4%EB%96%A4_%EC%9A%94%EC%B2%AD%EC%9D%B4_cors%EB%A5%BC_%EC%82%AC%EC%9A%A9%ED%95%A9%EB%8B%88%EA%B9%8C)
