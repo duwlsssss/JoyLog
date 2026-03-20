@@ -1,7 +1,5 @@
 import Link from 'next/link';
 
-import { Button } from '@components/ui/Button';
-
 import { ROUTES } from '@constants/routes';
 
 const NotFound = () => {
@@ -14,9 +12,12 @@ const NotFound = () => {
           이동되었을 수 있습니다.
         </p>
         <div className="mt-10">
-          <Button asChild size="lg" className="rounded-xl px-4">
-            <Link href={ROUTES.ROOT}>홈으로 돌아가기</Link>
-          </Button>
+          <Link
+            href={ROUTES.ROOT}
+            className="inline-flex items-center justify-center rounded-xl bg-slate-900 px-6 py-3 text-sm font-medium text-slate-50 transition-colors hover:bg-slate-900/90 dark:bg-slate-50 dark:text-slate-900 dark:hover:bg-slate-50/90"
+          >
+            홈으로 돌아가기
+          </Link>
         </div>
       </section>
     </main>
