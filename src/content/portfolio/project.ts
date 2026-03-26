@@ -55,8 +55,9 @@ export const PROJECTS = [
     achievements: [
       'WebSocket 프로토콜을 활용한 실시간 STT(Speech-to-Text) 스트리밍 클라이언트 구현',
       'Web Audio API를 통한 음성 데이터 청크 처리 및 브라우저 간 샘플링 속도 불일치 해결(Resampling)',
+      '발화자 구분 기능을 적용한 실시간 채팅 대시보드 구현',
       '사용자 친화적인 기능이 포함된 React 기반 커스텀 마크다운 편집기 컴포넌트 개발',
-      '팀별 맞춤형 설문 생성 및 응답 데이터 시각화 보고서 대시보드 구축',
+      'Playwright를 활용한 E2E 테스트 시나리오 설계 및 사용자 흐름 기반 자동화 테스트 구현',
     ],
     links: {
       site: 'https://haru.it.kr',
