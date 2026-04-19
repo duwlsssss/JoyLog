@@ -18,18 +18,17 @@
         "name": "next"
       }
     ],
-    "baseUrl": "./src",
     "paths": {
-      "@db/*": ["db/*"],
-      "@schemas/*": ["schemas/*"],
-      "@libs/*": ["libs/*"],
-      "@hooks/*": ["hooks/*"],
-      "@components/*": ["components/*"],
-      "@constants/*": ["constants/*"],
-      "@utils/*": ["utils/*"],
-      "@stores/*": ["stores/*"],
-      "@assets/*": ["assets/*"],
-      "@/*": ["*"]
+      "@db/*": ["./src/db/*"],
+      "@schemas/*": ["./src/schemas/*"],
+      "@libs/*": ["./src/libs/*"],
+      "@hooks/*": ["./src/hooks/*"],
+      "@components/*": ["./src/components/*"],
+      "@constants/*": ["./src/constants/*"],
+      "@utils/*": ["./src/utils/*"],
+      "@stores/*": ["./src/stores/*"],
+      "@assets/*": ["./src/assets/*"],
+      "@/*": ["./src/*"]
     }
   },
   "include": [

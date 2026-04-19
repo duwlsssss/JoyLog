@@ -14,6 +14,8 @@ import './globals.css';
 export const metadata: Metadata = {
   title: 'Joy 개발 블로그',
   description: '프론트엔드 개발자 Joy의 기술 블로그 및 포트폴리오입니다.',
+  keywords: ['프론트엔드', '개발 블로그', 'Next.js', 'React', 'TypeScript', 'Joy', 'JoyLog'],
+  authors: [{ name: 'Joy', url: SITE_URL }],
   verification: {
     google: 'X9PrAex_Szp4PQuR1iLdWmhWqdREcsn6qjAr-UBxgac',
   },
@@ -30,6 +32,29 @@ export const metadata: Metadata = {
   },
 };
 
+const websiteJsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'WebSite',
+      '@id': `${SITE_URL}/#website`,
+      url: SITE_URL,
+      name: 'JoyLog',
+      description: '프론트엔드 개발자 Joy의 기술 블로그 및 포트폴리오입니다.',
+      inLanguage: 'ko-KR',
+      publisher: { '@id': `${SITE_URL}/#person` },
+    },
+    {
+      '@type': 'Person',
+      '@id': `${SITE_URL}/#person`,
+      name: 'Joy',
+      url: SITE_URL,
+      jobTitle: '프론트엔드 개발자',
+      knowsAbout: ['프론트엔드 개발', 'React', 'Next.js', 'TypeScript', 'JavaScript'],
+    },
+  ],
+};
+
 const pretendard = localFont({
   src: './fonts/pretendard/PretendardVariable.woff2',
   variable: '--font-pretendard',
@@ -43,7 +68,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ko" suppressHydrationWarning>
+    <html lang="ko">
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
+        />
+      </head>
       <body className={cn(pretendard.variable, 'font-pretendard antialiased')}>
         <ThemeProvider
           attribute="class"

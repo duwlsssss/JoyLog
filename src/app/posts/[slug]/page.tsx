@@ -17,6 +17,8 @@ import ViewCounter from '@components/posts/ViewCounter';
 import { mdxComponents } from '@constants/mdx';
 import { SITE_URL } from '@constants/metadata';
 
+import { FaqItem } from '@/types/posts';
+
 interface Props {
   params: Promise<{ slug: string }>;
 }
@@ -28,6 +30,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: `${post.metadata.title} | JoyLog`,
     description: post.metadata.description ?? `${post.metadata.title} 포스트 읽기`,
+    keywords: post.metadata.tags,
+    authors: [{ name: 'Joy', url: SITE_URL }],
     openGraph: {
       title: post.metadata.title,
       description: post.metadata.description ?? `${post.metadata.title} 포스트 읽기`,
@@ -47,8 +51,56 @@ export default async function PostPage({ params }: Props) {
   // 조회수 증가는 비동기로 처리 - 렌더링 차단 x
   incrementViews(slug).catch((err) => console.error(err));
 
+  const articleNode = {
+    '@type': 'TechArticle',
+    '@id': `${SITE_URL}/posts/${slug}#article`,
+    headline: post.metadata.title,
+    description: post.metadata.description,
+    datePublished: post.metadata.date,
+    dateModified: post.metadata.date,
+    author: {
+      '@type': 'Person',
+      name: 'Joy',
+      url: SITE_URL,
+    },
+    publisher: {
+      '@type': 'Person',
+      name: 'Joy',
+      url: SITE_URL,
+    },
+    url: `${SITE_URL}/posts/${slug}`,
+    mainEntityOfPage: `${SITE_URL}/posts/${slug}`,
+    keywords: post.metadata.tags.join(', '),
+    inLanguage: 'ko-KR',
+    timeRequired: `PT${post.metadata.readingTime}M`,
+  };
+
+  const graph = post.metadata.faq?.length
+    ? [
+        articleNode,
+        {
+          '@type': 'FAQPage',
+          '@id': `${SITE_URL}/posts/${slug}#faq`,
+          mainEntity: post.metadata.faq.map((item: FaqItem) => ({
+            '@type': 'Question',
+            name: item.q,
+            acceptedAnswer: { '@type': 'Answer', text: item.a },
+          })),
+        },
+      ]
+    : [articleNode];
+
+  const articleJsonLd = {
+    '@context': 'https://schema.org',
+    '@graph': graph,
+  };
+
   return (
     <article className="prose prose-slate dark:prose-invert max-w-none">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
+      />
       <ReadingProgressBar />
       {/* 상단 정보 */}
       <header className="not-prose mb-10 flex flex-col gap-4 border-b pb-10">

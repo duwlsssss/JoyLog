@@ -3,6 +3,11 @@ title: '키보드 이벤트 알아두자 (react에서)'
 date: '2025-02-12'
 description: react에서 키보드 이벤트 알아두자
 tags: ['JS', 'React']
+faq:
+  - q: '한글 입력 중 Enter를 누르면 이벤트가 두 번 실행되는 이유는 무엇인가요?'
+    a: 'IME(Input Method Editor) 동작 방식 때문입니다. 한글 조합 완료(CompositionEnd)와 Enter 키다운(KeyDown) 이벤트가 동시에 발생해 일부 환경에서 핸들러가 중복 호출됩니다. e.nativeEvent.isComposing이 false일 때만 로직을 실행하도록 분기 처리하면 해결됩니다.'
+  - q: 'onKeyDown과 onKeyUp의 차이는 무엇인가요?'
+    a: 'onKeyDown은 키를 누르는 순간 실행되며 꾹 누르면 반복 실행됩니다. onKeyUp은 키를 떼는 순간 한 번만 실행됩니다. Enter 처리나 단축키에는 반응이 빠른 onKeyDown을 주로 사용합니다.'
 ---
 
 피클 프로젝트 중 검색 기능에서 오류를 발견했다.

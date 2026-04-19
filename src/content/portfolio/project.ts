@@ -2,13 +2,14 @@ export const PROJECTS = [
   {
     title: 'JoyLog',
     period: '2026.02 ~ now',
-    description: 'Next.js App Router 기반의 풀스택 개발 블로그',
-    tags: ['Next.js', 'TypeScript', 'Drizzle ORM', 'PostgreSQL', 'Tailwind CSS'],
+    description:
+      'Next.js 16 App Router 기반의 풀스택 개발 블로그. MDX 포스트, PostgreSQL 조회수 추적, SEO 자동화 포함',
+    tags: ['Next.js 16', 'React 19', 'TypeScript', 'Drizzle ORM', 'PostgreSQL', 'Tailwind CSS v4'],
     achievements: [
-      'Drizzle ORM을 활용하여 PostgreSQL 기반의 효율적인 관계형 데이터 모델(Post-Category-Tag) 설계',
-      '서버 사이드 렌더링(SSR)과 정적 재생성(ISR)을 조합하여 빠른 포스트 로딩 및 사용자 경험 최적화',
-      'Husky와 lint-staged를 도입하여 코드 커밋 전 자동 린트 검사 및 포맷팅 체계 구축',
-      '동적 메타데이터 생성 및 사이트맵 자동화를 통한 검색 엔진 최적화(SEO) 반영',
+      'MDX 기반 포스트 시스템 구축: 코드 하이라이팅, 이미지 줌, 코드 복사 등 커스텀 MDX 컴포넌트 구현',
+      'Drizzle ORM + PostgreSQL 기반 조회수 추적 시스템 (upsert 패턴, HMR 커넥션 중복 방지)',
+      '동적 OG 이미지 생성 및 sitemap/robots 자동화를 통한 SEO 체계 구축 (Google/Naver 등록)',
+      'Lefthook 기반 Git Hooks 체계: pre-commit(lint+타입체크), commit-msg(commitlint), pre-push(빌드 검증)',
     ],
     links: {
       site: 'https://joy-log-kappa.vercel.app',
@@ -126,4 +127,6 @@ export const PROJECTS = [
       github: 'https://github.com/duwlsssss/DOPAMING',
     },
   },
+  // Part Time Hell
+  // KIMS Bussiness Card Office
 ];

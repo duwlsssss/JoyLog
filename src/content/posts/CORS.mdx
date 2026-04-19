@@ -3,6 +3,11 @@ title: 'CORS'
 date: '2025-02-28'
 description: CORS error 정확히 말하자
 tags: ['CORS']
+faq:
+  - q: 'CORS 에러가 발생하는 이유는 무엇인가요?'
+    a: '브라우저의 동일 출처 정책(Same-Origin Policy) 때문입니다. 프로토콜, 호스트, 포트 중 하나라도 다른 출처로 요청하면 브라우저가 차단합니다. 서버가 응답 헤더에 Access-Control-Allow-Origin을 설정해야 해결됩니다.'
+  - q: 'Preflight 요청이란 무엇인가요?'
+    a: 'PUT, PATCH, DELETE 등 단순 요청 조건에 해당하지 않는 경우, 브라우저가 실제 요청 전에 OPTIONS 메소드로 서버에 허용 여부를 사전 확인하는 요청입니다. 서버는 Access-Control-Allow-Methods 헤더로 허용 메소드를 응답해야 합니다.'
 ---
 
 개발하면서 한번쯤은 `CORS`에러를 마주쳤을 것이다.
