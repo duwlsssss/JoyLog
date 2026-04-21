@@ -9,6 +9,7 @@ import Zoom from 'yet-another-react-lightbox/plugins/zoom';
 
 import 'yet-another-react-lightbox/styles.css';
 
+//
 interface ZoomImageProps {
   src: string;
   alt?: string;

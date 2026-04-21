@@ -1,0 +1,331 @@
+---
+title: 'GEO'
+date: '2026-04-20'
+description: GEO란 무엇인가요?
+tags: ['GEO']
+faq:
+  - q: 'GEO는 무엇인가요?'
+    a: 'GEO(Generative Engine Optimization)는 생성형 AI가 답변을 만들 때 내 콘텐츠를 참고·인용·언급하도록 돕는 최적화 기법입니다.'
+  - q: 'GEO를 적용하면 어떤 이점이 있나요?'
+    a: 'GEO를 적용하면 AI가 내 콘텐츠를 더 잘 이해하고 인용할 확률이 높아져, 검색 결과에서 더 높은 노출을 얻을 수 있습니다.'
+  - q: 'Preflight 요청이란 무엇인가요?' 
+    a: 'PUT, PATCH, DELETE 등 단순 요청 조건에 해당하지 않는 경우, 브라우저가 실제 요청 전에 OPTIONS 메소드로 서버에 허용 여부를 사전 확인하는 요청입니다. 서버는 Access-Control-Allow-Methods 헤더로 허용 메소드를 응답해야 합니다.'
+---
+
+스터디에서 여러번 언급된 **SEO**, next를 쓰는 이유 중 하나이기도 할 정도로 중요한데 이제는 하나 더 고려할 게 생김 -> **GEO(Generative Engine Optimization)**
+
+요즘은 구글링보다 ai에게 질문하며 검색하는 사람이 많음 → AI**에게 선택되려면 어떻게 해야할까** 가 중요해짐
+
+![ai에게 검색 이미지](https://mcawm4stpvqmonk2.public.blob.vercel-storage.com/GEO/%E1%84%8C%E1%85%B5%E1%86%AF%E1%84%8B%E1%85%B4%E1%84%80%E1%85%A5%E1%86%B7%E1%84%89%E1%85%A2%E1%86%A8.png)
+
+> **GEO(Generative Engine Optimization) : 생성형 엔진 최적화**
+> 
+> 
+> 생성형 AI가 답변을 만들 때 내 콘텐츠를 참고·인용·언급하도록 돕는 최적화
+> 
+
+SEO가 전통적으로 검색 결과 페이지에서의 발견과 클릭을 중심으로 했다면, 
+
+GEO는 **그 기반 위에서** AI 답변 안에서의 인용과 기여까지 함께 봄
+
+---
+
+### GEO 노출
+
+### 1. 콘텐츠가 웹에서 발견되고 이해돼야 함
+
+AI 답변도 결국 웹의 콘텐츠를 참고해야 하니까, 기초 SEO가 안 되어 있으면 GEO도 어려움
+
+### 2. AI가 답변을 만들 때 “쓰기 좋은 정보 단위”여야 함
+
+AI에 잘 쓰이는 콘텐츠는 대체로
+
+**질문에 답**: FAQ, How-to 가이드
+
+**문단 구조가 명확**: 명확한 소제목, 번호 매긴 리스트, 표로 정리된 데이터
+
+**정의·비교·가이트 콘텐츠가 분명**: 
+
+![질문 종류 이미지](https://mcawm4stpvqmonk2.public.blob.vercel-storage.com/GEO/%E1%84%8C%E1%85%B5%E1%86%AF%E1%84%86%E1%85%AE%E1%86%AB%E1%84%8C%E1%85%A9%E1%86%BC%E1%84%85%E1%85%B2.png)
+
+**근거가 드러나는 글**:
+
+![근거기준 이미지](https://mcawm4stpvqmonk2.public.blob.vercel-storage.com/GEO/%E1%84%80%E1%85%B3%E1%86%AB%E1%84%80%E1%85%A5%E1%84%80%E1%85%B5%E1%84%8C%E1%85%AE%E1%86%AB.png)
+
+이 기준에 맞을수록 AI가 인용할 확률 Up
+
+AI는 전통 검색처럼 “페이지 전체를 하나의 랭킹 객체”로만 보지 않고, **특정 문단, 정의, 요약, 절차, 비교, 근거 문장** 같은 더 잘게 쪼개진 정보 단위를 활용함
+
+특히 생성형 AI는 사용자의 질문 의도와 맥락을 파악해 연속적인 대화를 이어가기 때문에 **실제 고객이 자주 묻는 질문 등, 소비자의 관점에서** 콘텐츠를 만들면 AI가 그 내용을 더 잘 이해하고 답변에 인용할 확률 Up
+
+예시로
+
+![대화형 콘텐츠 이미지](https://mcawm4stpvqmonk2.public.blob.vercel-storage.com/GEO/%E1%84%83%E1%85%A2%E1%84%92%E1%85%AA%E1%84%92%E1%85%A7%E1%86%BC%E1%84%8F%E1%85%A9%E1%86%AB%E1%84%90%E1%85%A6%E1%86%AB%E1%84%8E%E1%85%B3.png)
+
+이런 대화형 콘텐츠를 웹에 삽입해 놓으면 유리함
+
+### 3. 인용·언급 가능성이 중요해짐
+
+GEO에서 노출의 단위는 `몇 위냐`뿐 아니라 **`얼마나 자주 답변의 근거로 쓰이느냐`**
+
+좋은 예로, Bing AI Performance는 이제 AI-generated answers에서 total citations(내 사이트 총 인용 횟수), cited pages(인용된 내 사이트의 특정 페이지), grounding query phrases(AI가 내 콘텐츠를 끌어오는 데 사용한 검색/질문 표현들) 등으로 사이트 인용을 측정함
+
+### 내 블로그에 적용해보자 🚀
+
+#### **1️⃣ 각 포스트 메타데이터에 `FAQ` 추가**
+
+```tsx
+---
+title: 'FTP 사용법 알아보자'
+date: '2025-02-27'
+description: FTP 개념, mac에서 사용법 알아보기
+tags: ['FTP']
+// frontmatter에 faq 필드 추가
+faq:
+  - q: 'FTP와 SFTP의 차이점은 무엇인가요?'
+    a: 'FTP는 암호화 없이 데이터를 전송하지만, SFTP는 SSH 기반으로 모든 데이터를 암호화하여 전송합니다. 또한 FTP는 명령 채널(21번)과 데이터 채널(20번) 두 개의 포트를 사용하지만, SFTP는 22번 포트 하나만 사용합니다.'
+  - q: 'Active 모드와 Passive 모드의 차이는 무엇인가요?'
+    a: 'Active 모드는 서버가 클라이언트에 역으로 접속해 데이터를 전송합니다. 클라이언트 방화벽에 막힐 수 있어 Passive 모드가 표준으로 사용됩니다. Passive 모드에서는 서버가 포트를 열면 클라이언트가 직접 접속하므로 방화벽 문제가 발생하지 않습니다.'
+---
+```
+
+#### **2️⃣ JSON-LD 구조화 데이터** 추가
+
+JSON for Linking Data: 웹페이지의 내용을 **기계가 이해할 수 있는 형태**로 설명하는 데이터
+
+사람이 읽는 것  →  본문 텍스트
+기계가 읽는 것  →  JSON-LD
+
+```tsx
+// app/layout.tsx
+// WebSite + Person 스키마
+const websiteJsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'WebSite', // 이 사이트 전체를 설명
+      '@id': `${SITE_URL}/#website`, // 사이트의 고유 ID (URI 형태)
+      url: SITE_URL, 
+      name: 'JoyLog',
+      description: '프론트엔드 개발자 Joy의 기술 블로그 및 포트폴리오입니다.',
+      inLanguage: 'ko-KR',
+      // AI가 "이 블로그는 Joy라는 사람이 운영한다"는 것을 이해하게 함
+      publisher: { '@id': `${SITE_URL}/#person` }, // 아래 Person을 참조
+    },
+    {
+      '@type': 'Person',
+      '@id': `${SITE_URL}/#person`,
+      name: 'Joy',
+      url: SITE_URL,
+      jobTitle: '프론트엔드 개발자',
+      // AI가 "프론트엔드 개발 관련 질문이 들어오면 이 사람 블로그를 참고하자"고 판단하는 근거가 됨
+      knowsAbout: ['프론트엔드 개발', 'React', 'Next.js', 'TypeScript', 'JavaScript'],
+    },
+  ],
+};
+
+// ...
+
+// head 태그, <script type="application/ld+json"> 안에 삽입
+// -> 실행도 파싱도 안 함, 크롤러가 와서 읽어감
+<head>
+  <script
+    type="application/ld+json"
+    dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
+  />
+</head>
+/*
+<script type="application/ld+json">
+	{
+	  "@type": "BlogPosting",
+	  "headline": "제목",
+	  "datePublished": "2025-04-19"
+	}
+</script>
+*/
+```
+
+```tsx
+// app/posts/[slug]/page.tsx
+// TechArticle + FAQPage 스키마
+const articleNode = {
+  '@type': 'TechArticle',
+  '@id': `${SITE_URL}/posts/${slug}#article`,
+  headline: post.metadata.title,
+  description: post.metadata.description,
+  datePublished: post.metadata.date,
+  dateModified: post.metadata.date,
+  author: {
+    '@type': 'Person',
+    name: 'Joy',
+    url: SITE_URL,
+  },
+  publisher: {
+    '@type': 'Person',
+    name: 'Joy',
+    url: SITE_URL,
+  },
+  url: `${SITE_URL}/posts/${slug}`,
+  mainEntityOfPage: `${SITE_URL}/posts/${slug}`,
+  keywords: post.metadata.tags.join(', '),
+  inLanguage: 'ko-KR',
+  timeRequired: `PT${post.metadata.readingTime}M`,
+};
+
+const graph = post.metadata.faq?.length
+  ? [
+      articleNode,
+      {
+        '@type': 'FAQPage',
+        '@id': `${SITE_URL}/posts/${slug}#faq`,
+        mainEntity: post.metadata.faq.map((item: FaqItem) => ({
+          '@type': 'Question',
+          name: item.q,
+          acceptedAnswer: { '@type': 'Answer', text: item.a },
+        })),
+      },
+    ]
+  : [articleNode];
+
+const articleJsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': graph,
+};
+
+// ...
+
+<script
+  type="application/ld+json"
+  dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
+/>
+```
+
+#### 3️⃣ llms.txt / llms-full.txt 추가
+
+llms.txt        →  목록 (가볍게 전체 파악)
+llms-full.txt →  전체 글 (깊게 읽을 때)
+
+```tsx
+// app/llms.txt
+// AI용 사이트맵
+// AI는 사이트 파악할때 sitemap.xml보다 llms.txt를 훨씬 잘 이해함
+// XML이 아닌 자연어 + 마크다운이기 때문
+import { getAllPosts } from '@libs/posts';
+
+import { SITE_URL } from '@constants/metadata';
+
+// 빌드 타임에 정적으로 생성
+export const dynamic = 'force-static';
+
+export async function GET() {
+  const posts = await getAllPosts();
+
+	// - [포스트 제목](URL): 한 줄 설명
+	// 형태로 포스트 목록 제공
+  const postList = posts
+    .map((post) => `- [${post.metadata.title}](${SITE_URL}/posts/${post.slug}): ${post.metadata.description}`)
+    .join('\n');
+
+  const content = `# JoyLog
+
+> 프론트엔드 개발자 Joy의 기술 블로그 및 포트폴리오
+
+## 블로그 소개
+
+JoyLog는 프론트엔드 개발자 Joy가 학습하고 경험한 내용을 정리하는 기술 블로그입니다.
+React, Next.js, TypeScript 등 웹 프론트엔드 기술을 주로 다룹니다.
+
+## 페이지
+
+- [홈](${SITE_URL}): 전체 포스트 목록
+- [포트폴리오](${SITE_URL}/portfolio): 프로젝트 소개
+
+## 포스트 목록
+
+${postList}
+
+## 추가 정보
+
+- llms-full.txt: ${SITE_URL}/llms-full.txt
+- sitemap: ${SITE_URL}/sitemap.xml
+`;
+
+	// 접근시 목록 제공 
+  return new Response(content, {
+    headers: { 'Content-Type': 'text/plain; charset=utf-8' },
+  });
+}
+
+```
+
+```tsx
+// app/llms-full.txt
+// 모든 포스트의 전체 본문을 하나의 파일로 제공함
+// AI가 검색 없이 직접 읽을 수 있는 형태임
+import fs from 'fs/promises';
+import path from 'path';
+
+import matter from 'gray-matter';
+
+import { getAllPosts } from '@libs/posts';
+
+import { SITE_URL } from '@constants/metadata';
+
+export const dynamic = 'force-static';
+
+const postsDirectory = path.join(process.cwd(), 'src/content/posts');
+
+export async function GET() {
+  const posts = await getAllPosts();
+
+  const sections: string[] = [
+    `# JoyLog - 전체 콘텐츠`,
+    ``,
+    `> 프론트엔드 개발자 Joy의 기술 블로그`,
+    `> URL: ${SITE_URL}`,
+    ``,
+    `---`,
+    ``,
+  ];
+
+	// 모든 포스트를 하나의 string 배열로 합침
+  for (const post of posts) {
+    const fullPath = path.join(postsDirectory, `${post.slug}.mdx`);
+    const fileContents = await fs.readFile(fullPath, 'utf8');
+    const { content } = matter(fileContents);
+
+    sections.push(`## ${post.metadata.title}`);
+    sections.push(`URL: ${SITE_URL}/posts/${post.slug}`);
+    sections.push(`날짜: ${post.metadata.date}`);
+    sections.push(`태그: ${post.metadata.tags.join(', ')}`);
+    if (post.metadata.description) {
+      sections.push(`요약: ${post.metadata.description}`);
+    }
+    sections.push(``);
+    sections.push(content.trim());
+    sections.push(``);
+    sections.push(`---`);
+    sections.push(``);
+  }
+
+	// 접근시 전체 글 제공
+  return new Response(sections.join('\n'), {
+    headers: { 'Content-Type': 'text/plain; charset=utf-8' },
+  });
+}
+
+```
+
+---
+
+### 결론
+
+GEO는 아직 명확한 해답이 있는 영역은 아님. 생성형 AI 기술이 빠르게 발전하면서, 정답도 하나가 아니고 접근 방식도 계속 바뀌고 있음. 당장 우리 사이트에서 적용할 수 있는 작은 시도부터 차근차근 해봐야함
+
+### 참고자료
+
+---
+
+- [SEO를 넘어 GEO로, 생성형 AI 시대 이커머스 대응 전략](https://www.tosspayments.com/blog/articles/39461)
+- [AI 시대 콘텐츠 생존 전략: GEO를 위한 SIFT프레임워크 | 요즘IT](https://yozm.wishket.com/magazine/detail/3654/)
+- [“이걸 누가 관리하나요?” GEO 자동화가 필요한 이유 | 요즘IT](https://yozm.wishket.com/magazine/detail/3713/)
