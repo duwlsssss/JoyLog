@@ -21,11 +21,7 @@ backend `main`의 서브모듈 포인터가 **spec 원격에 없는 커밋**을 
 
 원인을 찾고 다시는 같은 일이 안 생기게 막기까지 생각보다 시간이 걸려서 정리해 둔다.
 
----
-
 ## 왜 서브모듈로 스펙을 관리했나
-
----
 
 - `openapi.yaml`을 API 명세의 **단일 진실의 출처(SSOT)** 로 두고 싶었다.
 - backend와 frontend가 같은 파일을 봐야 하는데, 각 레포에 복사해 두면 금방 어긋난다.
@@ -33,7 +29,7 @@ backend `main`의 서브모듈 포인터가 **spec 원격에 없는 커밋**을 
 
 그래서 구조를 이렇게 잡았다.
 
-```
+```diagram
 spec (private)
  ├─ api/openapi.yaml, api/CHANGELOG.md, docs/ ...
  └─ .github/workflows/update-consumers.yml
@@ -58,11 +54,7 @@ frontend/spec ← 서브모듈 포인터 갱신 PR 자동 생성
 - uses: peter-evans/create-pull-request@v6
 ```
 
----
-
 ## 🚨 자동 갱신이 조용히 멈췄다
-
----
 
 contract test를 추가하려고 보니 backend의 `spec` 디렉터리에 `api/openapi.yaml`이 없었다.
 spec 레포의 Actions 기록을 열어 보니 backend 갱신 job이 계속 실패하고 있었다.
@@ -104,11 +96,7 @@ $ git ls-tree HEAD spec
 
 조용히 실패하는 자동화는 없는 것보다 위험하다. 실패를 아무도 보지 못하는 동안 다들 잘 돌아가고 있다고 믿게 된다.
 
----
-
 ## 해결 1. 포인터 복구 + CI에서 spec 받기
-
----
 
 포인터 복구 자체는 간단하다. spec `main`의 최신 커밋으로 올리면 된다.
 문제는 **CI가 spec을 받게 만드는 것**이었다. 그래야 다음에 깨졌을 때 CI가 잡는다.
@@ -181,11 +169,7 @@ jobs:
     secrets: inherit
 ```
 
----
-
 ## 해결 2. 스펙과 실제 응답을 비교하는 계약 테스트
-
----
 
 "스펙이 옛날 상태여도 드러날 방법이 없었다"는 문제를 풀려고 contract test를 붙였다.
 `openapi.yaml`을 직접 파싱하고, 실제 API 응답 body를 `jsonschema`로 대조한다.
@@ -209,11 +193,7 @@ CI에서 spec 파일을 못 받았을 때 테스트가 **skip되면 안 된다**
 skip이면 계약 테스트 전체가 초록불이 되고, 또 조용히 드리프트를 놓친다. 
 그래서 로컬에서는 skip하고, CI에서는 실패하게 했다.
 
----
-
 ## 해결 3. 포인터를 잘못 옮기는 PR을 CI에서 막기
-
----
 
 이제 상위 레포 PR에서 포인터가 바뀌면 검사해야 한다. 
 
@@ -261,7 +241,7 @@ PR에서 `actions/checkout`이 받는 `HEAD`는 PR 브랜치가 아니라 **base
 그런데 spec을 `fetch-depth: 0`으로 받으면 spec main에 아직 머지되지 않은 기능 브랜치 커밋도 다 받아진다. 
 여기서 기능 브랜치 커밋은 spec main에서 갈라진 브랜치 위에서 만든 일반 커밋이다.
 
-```
+```diagram
 spec main:       A ── B ── C        ← 복구 PR의 head 포인터
                       \
 spec feature/x:        X            ← 상위 레포 main의 base 포인터
@@ -274,6 +254,7 @@ spec feature/x:        X            ← 상위 레포 main의 base 포인터
 
 같은 실수가 다시 나지 않게 임시 git 레포로 8가지 경우를 재현하는 회귀 테스트도 만들어 CI에서 매번 돌린다.
 
+```diagram
 1. ✅ 포인터 동일
 2. ✅ spec main 안에서 앞으로 이동
 3. ❌ spec main 안에서 예전 커밋으로 되돌림
@@ -282,24 +263,17 @@ spec feature/x:        X            ← 상위 레포 main의 base 포인터
 6. ✅ 깨진 base(없는 커밋) → spec main 커밋으로 복구
 7. ✅ 깨진 base(기능 브랜치 커밋) → spec main 커밋으로 복구
 8. ❌ 깨진 base → 기능 브랜치 커밋
+```
 
 수정 전 스크립트로 이 테스트를 돌리면 7번째 경우만 실패한다. 테스트가 그 버그를 실제로 잡는다는 걸 확인하고 넣었다.
 
----
-
 ## 해결 4. 필수 체크로 걸어야 진짜 막힌다
-
----
 
 CI가 실패해도 `main`에 보호 규칙이 없으면 merge 버튼은 그냥 눌린다. ruleset으로 테스트 체크를 필수로 지정했다.
 
 ![ruleset에서 Test를 필수 status check로 지정한 화면](https://mcawm4stpvqmonk2.public.blob.vercel-storage.com/git-submodule-spec/requiredStatusCheck.png)
 
----
-
-### 결론
-
----
+## 결론
 
 - 서브모듈은 파일이 아니라 **커밋 해시**를 저장한다. 이걸 모르면 `git add .` 한 번에 스펙이 과거로 돌아가거나, 아무도 받을 수 없는 커밋을 가리키게 된다.
 - 자동화는 **실패가 보여야** 의미가 있다. 실패 알림이 엉뚱한 레포에만 떠서 7주를 몰랐다.
@@ -310,9 +284,10 @@ CI가 실패해도 `main`에 보호 규칙이 없으면 merge 버튼은 그냥 �
 
 서브모듈이 정답이라고는 생각하지 않는다. 스펙을 npm 패키지로 배포하거나 모노레포로 합치는 방법도 있다. 다만 서브모듈을 쓴다면 "포인터"라는 개념을 팀 전체가 알아야 하고, 그걸 CI가 지켜줘야 한다.
 
+---
+
 ### 참고자료
 
----
 
 - [Git - Submodules](https://git-scm.com/book/en/v2/Git-Tools-Submodules)
 - [actions/checkout](https://github.com/actions/checkout)
