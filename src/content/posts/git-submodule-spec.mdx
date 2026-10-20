@@ -1,0 +1,320 @@
+---
+title: 'Git Submodule로 API 스펙 공유하기'
+date: '2026-10-11'
+description: 스펙을 별도 레포로 분리하고 backend와 frontend가 git submodule로 참조하게 했을 때 생긴 함정과 해결책
+tags: ['Git', 'CI']
+faq:
+  - q: 'Git Submodule은 무엇을 저장하나요?'
+    a: '서브모듈은 파일 내용이 아니라 참조하는 레포의 커밋 해시(포인터)만 저장합니다. 그래서 상위 레포에서 git add .를 하면 서브모듈 디렉터리에서 바뀐 커밋 해시가 함께 커밋될 수 있습니다.'
+  - q: '"upload-pack: not our ref" 에러는 왜 발생하나요?'
+    a: '서브모듈 포인터가 원격 레포에 존재하지 않는 커밋을 가리킬 때 발생합니다. 주로 서브모듈 디렉터리 안에서 만든 커밋을 push하지 않은 채 상위 레포에 포인터만 커밋했을 때 생깁니다.'
+  - q: 'private 서브모듈을 GitHub Actions에서 받으려면 어떻게 하나요?'
+    a: '기본 GITHUB_TOKEN은 현재 레포 권한만 있어서 submodules: true로는 받을 수 없습니다. 서브모듈 레포에 읽기 전용 deploy key를 등록하고, 개인키를 상위 레포 시크릿으로 넣은 뒤 actions/checkout의 ssh-key로 서브모듈 레포를 따로 checkout하면 됩니다.'
+---
+
+금융 시뮬레이터 프로젝트에서 API 스펙을 별도 레포로 분리하고, backend와 frontend가 `git submodule`로 참조하게 했다.
+spec 레포에 merge되면 GitHub Actions가 양쪽에 **서브모듈 갱신 PR**을 자동으로 만들어 주는 구조로 설계했다.
+spec 수정은 spec 레포에서만 진행하기를 원한 설계였지만 변수를 더 고려해야 했음을 간과했다.
+
+팀원이 backend 레포의 `spec/` 디렉터리에서 스펙을 고치고 머지함으로써, 
+backend `main`의 서브모듈 포인터가 **spec 원격에 없는 커밋**을 가리키게 됐다. 그 뒤로 backend 쪽 자동 갱신이 **7주 동안 조용히 멈춰 있었다.**
+
+원인을 찾고 다시는 같은 일이 안 생기게 막기까지 생각보다 시간이 걸려서 정리해 둔다.
+
+---
+
+## 왜 서브모듈로 스펙을 관리했나
+
+---
+
+- `openapi.yaml`을 API 명세의 **단일 진실의 출처(SSOT)** 로 두고 싶었다.
+- backend와 frontend가 같은 파일을 봐야 하는데, 각 레포에 복사해 두면 금방 어긋난다.
+- 패키지로 배포하기엔 문서 레포라 과하고, 모노레포로 합치기엔 레포가 이미 나뉘어 있었다.
+
+그래서 구조를 이렇게 잡았다.
+
+```
+spec (private)
+ ├─ api/openapi.yaml, api/CHANGELOG.md, docs/ ...
+ └─ .github/workflows/update-consumers.yml
+        │ spec main에 push되면
+        ▼
+backend/spec  ← 서브모듈 포인터 갱신 PR 자동 생성
+frontend/spec ← 서브모듈 포인터 갱신 PR 자동 생성
+```
+
+`update-consumers.yml`이 하는 일은 단순하다.
+
+```yaml
+- uses: actions/checkout@v4
+  with:
+    repository: <org>/backend
+    token: ${{ secrets.PAT_TOKEN }}
+    submodules: true
+- run: |
+    git submodule update --remote spec
+    git add spec
+    git commit -m "chore: update spec submodule"
+- uses: peter-evans/create-pull-request@v6
+```
+
+---
+
+## 🚨 자동 갱신이 조용히 멈췄다
+
+---
+
+contract test를 추가하려고 보니 backend의 `spec` 디렉터리에 `api/openapi.yaml`이 없었다.
+spec 레포의 Actions 기록을 열어 보니 backend 갱신 job이 계속 실패하고 있었다.
+
+![spec 레포의 update-backend action 실패 이미지](https://mcawm4stpvqmonk2.public.blob.vercel-storage.com/git-submodule-spec/updateActionFailed.png)
+
+```
+fatal: remote error: upload-pack: not our ref 2c2ea6cae48f...
+fatal: Fetched in submodule path 'spec', but it did not contain 2c2ea6cae48f...
+```
+
+backend `main`의 서브모듈 포인터가 **spec 원격 레포에 존재하지 않는 커밋**을 가리키고 있었다.
+GitHub API로 그 커밋을 조회해도 `No commit found`가 나왔다. 한 번도 push된 적이 없는 커밋이었다.
+
+### 서브모듈은 파일이 아니라 "커밋 해시"를 저장한다
+
+이게 핵심이었다. 상위 레포 입장에서 `spec`은 디렉터리가 아니라 **커밋 해시 하나**다.
+
+```bash
+$ git ls-tree HEAD spec
+160000 commit 2c2ea6cae48f...	spec
+```
+
+포인터의 변화를 따라가 보니 경위가 보였다.
+
+1. 누군가 backend 안의 `spec/` 디렉터리에서 스펙을 고치고 **커밋했다.** spec 원격에는 push하지 않았다.
+2. 기능 코드를 커밋하면서 `git add .`에 바뀐 포인터가 같이 들어갔다.
+3. 그 기능 브랜치가 merge되면서, 그 사이 자동 갱신 PR로 올려 둔 `main`의 정상 포인터를 **덮어썼다.**
+
+그 뒤로 spec 레포에 PR이 merge될 때마다 `update-consumers`는 갱신 PR을 만들려고 backend를 `submodules: true`로 checkout했고,
+깨진 포인터 때문에 `upload-pack: not our ref` 에러가 나면서 실패했다. 갱신 PR은 만들어지지 않았고, backend는 그대로 옛 스펙에 머물렀다.
+
+### 왜 7주 동안 아무도 몰랐나
+
+- 실패가 **spec 레포의 Actions**에서만 드러났다. backend 개발자가 평소에 들여다보는 곳이 아니다.
+- backend CI는 서브모듈을 받지 않았다. `actions/checkout`은 기본값이 `submodules: false`라서 포인터(커밋 해시)만 갖고 있을 뿐, 
+  그 해시로 spec 원격에 커밋을 받으러 가지 않는다. 포인터가 깨졌는지 확인할 기회가 없으니 CI는 계속 통과했다.
+- 스펙과 실제 API 응답을 비교하는 테스트가 없었다. backend가 옛날 스펙에 머물러 있어도 드러날 방법이 없었다.
+
+조용히 실패하는 자동화는 없는 것보다 위험하다. 실패를 아무도 보지 못하는 동안 다들 잘 돌아가고 있다고 믿게 된다.
+
+---
+
+## 해결 1. 포인터 복구 + CI에서 spec 받기
+
+---
+
+포인터 복구 자체는 간단하다. spec `main`의 최신 커밋으로 올리면 된다.
+문제는 **CI가 spec을 받게 만드는 것**이었다. 그래야 다음에 깨졌을 때 CI가 잡는다.
+
+### 문제 1: private 서브모듈은 `submodules: true`로 안 받아진다
+
+`actions/checkout`의 기본 `GITHUB_TOKEN`은 **현재 레포 권한만** 있다. 즉 private인 spec 레포는 못 읽는다.
+
+선택지는 이 정도였다.
+
+- **Deploy key (읽기 전용)**: spec 읽기로만 권한이 한정되고 개인 계정과 무관하다. 대신 키를 관리해야 한다.
+- **Fine-grained PAT**: 설정이 가장 빠르다. 대신 발급자 계정에 묶이고 만료를 관리해야 한다.
+- **GitHub App**: 계정과 무관하고 만료 관리도 필요 없다. 대신 설정 단계가 많다.
+
+이미 있던 `PAT_TOKEN`을 재사용하는 방법도 있었지만, 그 토큰은 갱신 PR을 만들려고 쓰기 권한까지 갖고 있었다. 테스트 CI에 쓰기엔 권한이 너무 넓어서 deploy key로 갔다.
+
+### 문제 2: org에서 deploy key가 꺼져 있었다
+
+```
+HTTP 422: Deploy keys are disabled for this repository
+```
+
+organization 설정에서 deploy key 자체가 비활성화돼 있었다. org admin이 켜야 한다.
+
+```bash
+gh api -X PATCH orgs/<org> -F deploy_keys_enabled_for_repositories=true
+```
+
+### 문제 3: `ssh-key` + `submodules: true`를 같이 쓰면 본체 checkout이 깨진다
+
+deploy key는 **레포 하나**에만 권한이 있다. 그런데 `actions/checkout`의 `ssh-key`는 그 checkout 단계 전체에 적용되는 옵션이라 서브모듈에만 따로 줄 수 없다. 
+그래서 `ssh-key`와 `submodules: true`를 같이 주면 spec용으로 넣은 deploy key로 본체(backend)까지 받으려 하고, 
+backend에는 등록되지 않은 키라 본체 checkout이 실패한다.
+
+| | 써야 할 인증 | `ssh-key` + `submodules: true`를 같이 쓰면 |
+|---|---|---|
+| backend 본체 | `GITHUB_TOKEN` (기본값) | deploy key로 시도 → **실패** |
+| spec 서브모듈 | deploy key | deploy key로 시도 → 성공 |
+
+그래서 본체는 그대로 받고, spec만 따로 checkout했다.
+
+```yaml
+- name: Checkout
+  uses: actions/checkout@v4
+
+- name: Checkout spec
+  uses: actions/checkout@v4
+  with:
+    repository: <org>/spec
+    ref: main
+    fetch-depth: 0
+    path: spec
+    ssh-key: ${{ secrets.SPEC_DEPLOY_KEY }}
+    persist-credentials: false   # 이후 단계에서 쓸 일이 없으니 키를 git 설정에 남기지 않는다
+
+- name: Switch spec to submodule pointer
+  run: git -C spec checkout --quiet --detach "$(git rev-parse HEAD:spec)"
+```
+
+`git rev-parse HEAD:spec`으로 상위 레포가 기록한 포인터를 읽고, 그 커밋으로 전환한다.
+
+### 문제 4: `workflow_call`은 시크릿을 자동으로 넘기지 않는다
+
+배포 워크플로가 테스트 워크플로를 `workflow_call`로 호출하고 있었다. 이 경우 호출하는 쪽에서 `secrets: inherit`를 줘야 시크릿이 넘어간다.
+
+```yaml
+jobs:
+  test:
+    uses: ./.github/workflows/test.yml
+    secrets: inherit
+```
+
+---
+
+## 해결 2. 스펙과 실제 응답을 비교하는 계약 테스트
+
+---
+
+"스펙이 옛날 상태여도 드러날 방법이 없었다"는 문제를 풀려고 contract test를 붙였다.
+`openapi.yaml`을 직접 파싱하고, 실제 API 응답 body를 `jsonschema`로 대조한다.
+
+- 스펙에 있는 경로가 앱에 없으면 실패
+- 응답 status code가 스펙에 정의돼 있지 않으면 실패
+- 응답 body가 스펙 스키마를 위반하면 실패
+
+붙이자마자 실제로 어긋난 부분을 하나 확인했다. 
+최고 신용등급 유저는 "다음 등급"이 없어서 백엔드가 `null`을 응답하는데, 스펙은 `null`을 허용하지 않았다.
+
+참고로 OpenAPI 3.0에서는 `$ref` 옆에 붙인 키워드가 무시된다. 그래서 `$ref`에 `nullable`을 붙이려면 `allOf`로 감싸야 한다.
+
+```yaml
+next_grade:
+  allOf: [{ $ref: '#/components/schemas/CreditGrade' }]
+  nullable: true
+```
+
+CI에서 spec 파일을 못 받았을 때 테스트가 **skip되면 안 된다**는 점도 리뷰에서 짚었다. 
+skip이면 계약 테스트 전체가 초록불이 되고, 또 조용히 드리프트를 놓친다. 
+그래서 로컬에서는 skip하고, CI에서는 실패하게 했다.
+
+---
+
+## 해결 3. 포인터를 잘못 옮기는 PR을 CI에서 막기
+
+---
+
+이제 상위 레포 PR에서 포인터가 바뀌면 검사해야 한다. 
+
+1. 새 포인터가 **spec `main` 히스토리에 있는 커밋**인가: push 안 된 로컬 커밋을 막는다.
+2. 새 포인터가 **base 포인터 이후의 커밋(후손)** 인가: 예전 커밋으로 되돌리는 걸 막는다.
+
+포인터 변경 자체를 금지하지 않은 이유는, 자동 갱신 PR도 결국 포인터를 바꾸기 때문이다.
+
+```sh
+SPEC_DIR=spec
+HEAD_PTR=$(git rev-parse "HEAD:$SPEC_DIR")     # merge되면 상위 레포 main에 들어갈 포인터
+BASE_PTR=$(git rev-parse "HEAD^1:$SPEC_DIR")   # 현재 상위 레포 main의 포인터
+
+in_spec_main() {
+    git -C "$SPEC_DIR" cat-file -e "$1^{commit}" 2>/dev/null &&
+        git -C "$SPEC_DIR" merge-base --is-ancestor "$1" origin/main
+}
+
+if [ "$BASE_PTR" = "$HEAD_PTR" ]; then
+    exit 0   # 포인터를 건드리지 않은 PR
+fi
+
+in_spec_main "$HEAD_PTR" || fail "head 포인터가 spec main 히스토리에 없는 커밋"
+
+# 상위 레포 main이 이미 깨진 상태면 비교 기준이 없으니, spec main 커밋으로 되돌리는 복구 PR은 통과시킨다
+in_spec_main "$BASE_PTR" || exit 0
+
+git -C "$SPEC_DIR" merge-base --is-ancestor "$BASE_PTR" "$HEAD_PTR" ||
+    fail "head 포인터가 base 포인터보다 앞선 커밋이 아님"
+```
+
+### 무엇과 무엇을 비교할까
+
+PR에서 `actions/checkout`이 받는 `HEAD`는 PR 브랜치가 아니라 **base와 합친 merge 커밋**이다. 그래서 이렇게 비교했다.
+
+- head: `HEAD:spec`. merge 결과의 포인터, 즉 merge되면 실제로 상위 레포 `main`에 들어갈 값이다.
+- base: `HEAD^1:spec`. merge 커밋의 첫 번째 부모다. 본체 checkout을 `fetch-depth: 2`로 받으면 얻을 수 있다.
+
+이렇게 하면 포인터를 건드리지 않은 오래된 브랜치는 merge 결과가 상위 레포 `main`의 포인터를 따르니 오탐이 없다.
+`github.event.pull_request.base.sha`는 이벤트 시점 값이라 그 뒤 상위 레포 `main`이 앞서가면 어긋날 수 있어서 쓰지 않았다.
+
+### 리뷰에서 잡힌 버그: 복구 PR이 막히는 경우
+
+처음에는 "base가 깨졌는가"를 **커밋이 존재하는가**로만 판단했다.
+그런데 spec을 `fetch-depth: 0`으로 받으면 spec main에 아직 머지되지 않은 기능 브랜치 커밋도 다 받아진다. 
+여기서 기능 브랜치 커밋은 spec main에서 갈라진 브랜치 위에서 만든 일반 커밋이다.
+
+```
+spec main:       A ── B ── C        ← 복구 PR의 head 포인터
+                      \
+spec feature/x:        X            ← 상위 레포 main의 base 포인터
+```
+
+상위 레포 `main`이 `X`를 가리키는 상태라면, `X`는 spec main에 없는데도 **받아 온 spec에는 존재**하니 복구 예외를 타지 않는다.
+그런데 `X`는 `C`의 조상이 아니라서, 정상적인 복구 PR(`X → C`)이 앞으로 이동한 게 아니라는 이유로 막힌다.
+
+그래서 기준을 **"spec main 히스토리에 있는가"** 로 바꿨다. base 포인터가 spec main에 없으면 이미 깨진 상태로 보고, spec main 커밋으로 옮기는 복구 PR은 통과시킨다.
+
+같은 실수가 다시 나지 않게 임시 git 레포로 8가지 경우를 재현하는 회귀 테스트도 만들어 CI에서 매번 돌린다.
+
+1. ✅ 포인터 동일
+2. ✅ spec main 안에서 앞으로 이동
+3. ❌ spec main 안에서 예전 커밋으로 되돌림
+4. ❌ head가 spec 기능 브랜치 커밋
+5. ❌ head가 어디에도 없는 커밋
+6. ✅ 깨진 base(없는 커밋) → spec main 커밋으로 복구
+7. ✅ 깨진 base(기능 브랜치 커밋) → spec main 커밋으로 복구
+8. ❌ 깨진 base → 기능 브랜치 커밋
+
+수정 전 스크립트로 이 테스트를 돌리면 7번째 경우만 실패한다. 테스트가 그 버그를 실제로 잡는다는 걸 확인하고 넣었다.
+
+---
+
+## 해결 4. 필수 체크로 걸어야 진짜 막힌다
+
+---
+
+CI가 실패해도 `main`에 보호 규칙이 없으면 merge 버튼은 그냥 눌린다. ruleset으로 테스트 체크를 필수로 지정했다.
+
+![ruleset에서 Test를 필수 status check로 지정한 화면](https://mcawm4stpvqmonk2.public.blob.vercel-storage.com/git-submodule-spec/requiredStatusCheck.png)
+
+---
+
+### 결론
+
+---
+
+- 서브모듈은 파일이 아니라 **커밋 해시**를 저장한다. 이걸 모르면 `git add .` 한 번에 스펙이 과거로 돌아가거나, 아무도 받을 수 없는 커밋을 가리키게 된다.
+- 자동화는 **실패가 보여야** 의미가 있다. 실패 알림이 엉뚱한 레포에만 떠서 7주를 몰랐다.
+- 그래서 규칙을 문서로 두는 데서 끝내지 않고 CI로 강제했다.
+  - 스펙 수정은 spec 레포에서 PR로만 한다.
+  - 포인터는 spec `main` 커밋으로만, 앞으로만 옮긴다.
+  - 테스트를 필수 체크로 건다.
+
+서브모듈이 정답이라고는 생각하지 않는다. 스펙을 npm 패키지로 배포하거나 모노레포로 합치는 방법도 있다. 다만 서브모듈을 쓴다면 "포인터"라는 개념을 팀 전체가 알아야 하고, 그걸 CI가 지켜줘야 한다.
+
+### 참고자료
+
+---
+
+- [Git - Submodules](https://git-scm.com/book/en/v2/Git-Tools-Submodules)
+- [actions/checkout](https://github.com/actions/checkout)
+- [Managing deploy keys - GitHub Docs](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/managing-deploy-keys)
+- [About rulesets - GitHub Docs](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/about-rulesets)
