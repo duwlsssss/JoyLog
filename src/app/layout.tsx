@@ -7,14 +7,14 @@ import ThemeProvider from '@components/layout/ThemeProvider.client';
 import Footer from '@components/layout/footer/Footer';
 import Header from '@components/layout/header/Header';
 
-import { SITE_URL } from '@constants/metadata';
+import { SITE_DESCRIPTION, SITE_TITLE, SITE_URL } from '@constants/metadata';
 
 import './globals.css';
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  title: 'Joy 개발 블로그',
-  description: '프론트엔드 개발자 Joy의 기술 블로그 및 포트폴리오입니다.',
+  title: SITE_TITLE,
+  description: SITE_DESCRIPTION,
   keywords: ['프론트엔드', '개발 블로그', 'Next.js', 'React', 'TypeScript', 'Joy', 'JoyLog'],
   authors: [{ name: 'Joy', url: SITE_URL }],
   verification: {
@@ -24,8 +24,8 @@ export const metadata: Metadata = {
     'naver-site-verification': '72ceb204b618147c9c3b2dc2c8cacdceb5e39a9f',
   },
   openGraph: {
-    title: 'Joy 개발 블로그',
-    description: '프론트엔드 개발자 Joy의 기술 블로그 및 포트폴리오입니다.',
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
     url: SITE_URL,
     siteName: 'JoyLog',
     locale: 'ko_KR',
@@ -41,7 +41,7 @@ const websiteJsonLd = {
       '@id': `${SITE_URL}/#website`,
       url: SITE_URL,
       name: 'JoyLog',
-      description: '프론트엔드 개발자 Joy의 기술 블로그 및 포트폴리오입니다.',
+      description: SITE_DESCRIPTION,
       inLanguage: 'ko-KR',
       publisher: { '@id': `${SITE_URL}/#person` },
     },
