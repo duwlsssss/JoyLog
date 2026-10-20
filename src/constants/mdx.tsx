@@ -79,6 +79,7 @@ export const mdxComponents: MDXRemoteProps['components'] = {
     return <p className="leading-7 break-keep whitespace-pre-line not-first:mt-6">{children}</p>;
   },
   br: () => <div className="h-4" />,
+  hr: () => <hr className="mt-12 mb-16" />,
   // 코드
   code: ({ children, ...props }) => {
     // rehype-pretty-code가 적용된 코드 블록 내부에 있는 code 태그인지 확인
