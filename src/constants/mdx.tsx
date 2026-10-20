@@ -98,6 +98,16 @@ export const mdxComponents: MDXRemoteProps['components'] = {
     );
   },
   pre: ({ children, ...props }) => {
+    // ```diagram 블록은 코드가 아닌 구조도로 표시 (상단바·복사 버튼 없음)
+    // 테마의 다크 배경(style)과 span 글자색은 덮어써서 본문 색을 따르게 함
+    if (props['data-language'] === 'diagram') {
+      return (
+        <pre className="[&_span]:text-foreground! my-6 overflow-x-auto rounded-lg border p-4 text-sm leading-6">
+          {children}
+        </pre>
+      );
+    }
+
     // 코드 텍스트 추출
     const codeText = extractText(children);
 
