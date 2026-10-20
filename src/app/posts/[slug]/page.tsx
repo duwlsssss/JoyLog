@@ -6,6 +6,7 @@ import Link from 'next/link';
 import type { Element } from 'hast';
 import { MDXRemote } from 'next-mdx-remote/rsc';
 import rehypePrettyCode from 'rehype-pretty-code';
+import remarkGfm from 'remark-gfm';
 
 import { incrementViews } from '@libs/actions';
 import { getAdjacentPosts, getPostBySlug } from '@libs/posts';
@@ -132,6 +133,7 @@ export default async function PostPage({ params }: Props) {
         components={mdxComponents}
         options={{
           mdxOptions: {
+            remarkPlugins: [remarkGfm],
             rehypePlugins: [
               [
                 rehypePrettyCode,

@@ -128,6 +128,16 @@ export const mdxComponents: MDXRemoteProps['components'] = {
       </div>
     );
   },
+  // 표 (모바일에서 넘치면 가로 스크롤)
+  table: ({ children }) => (
+    <div className="my-6 overflow-x-auto">
+      <table className="w-full border-collapse text-sm">{children}</table>
+    </div>
+  ),
+  th: ({ children }) => (
+    <th className="bg-muted border px-3 py-2 text-left font-semibold break-keep">{children}</th>
+  ),
+  td: ({ children }) => <td className="border px-3 py-2 break-keep">{children}</td>,
   // 리스트
   ul: ({ children }) => (
     <ul className="marker:text-primary my-4 ml-6 list-disc space-y-1 [&_ol]:my-1 [&_ol]:ml-4 [&_ul]:my-1 [&_ul]:ml-4">
