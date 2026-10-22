@@ -12,9 +12,9 @@ export default function ProjectCard({ project }: ProjectCardProps) {
       {/* 제목 및 기간 */}
       <div className="flex flex-col gap-1">
         <div className="flex items-center justify-between">
-          <h2 className="text-2xl font-bold tracking-tight transition-all duration-300 group-hover:text-blue-300">
+          <h3 className="text-2xl font-bold tracking-tight transition-all duration-300 group-hover:text-blue-300">
             {project.title}
-          </h2>
+          </h3>
           <span className="text-sm font-medium text-slate-400">{project.period}</span>
         </div>
         <p className="text-lg leading-relaxed text-slate-600 dark:text-slate-400">

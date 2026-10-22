@@ -52,6 +52,9 @@ importers:
       react-dom:
         specifier: 19.2.3
         version: 19.2.3(react@19.2.3)
+      react-icons:
+        specifier: ^5.7.0
+        version: 5.7.0(react@19.2.3)
       rehype-pretty-code:
         specifier: ^0.14.1
         version: 0.14.1(shiki@3.23.0)
@@ -8539,6 +8542,14 @@ packages:
     peerDependencies:
       react: ^19.2.3
 
+  react-icons@5.7.0:
+    resolution:
+      {
+        integrity: sha512-LBLy340Rzqy6+/yVhZKT3B/QpP1BZaesGqasf09HPOBzRarcDIFH0WwXlXQfE7q7ipxK4MSiC5DIBWURCny6fw==,
+      }
+    peerDependencies:
+      react: '*'
+
   react-is@16.13.1:
     resolution:
       {
@@ -15708,6 +15719,10 @@ snapshots:
     dependencies:
       react: 19.2.3
       scheduler: 0.27.0
+
+  react-icons@5.7.0(react@19.2.3):
+    dependencies:
+      react: 19.2.3
 
   react-is@16.13.1: {}
 

@@ -1,10 +1,15 @@
 import type { Metadata } from 'next';
 
+import ProfileHeader from '@components/portfolio/ProfileHeader';
 import ProjectCard from '@components/portfolio/ProjectCard.client';
+import ResumeItemList from '@components/portfolio/ResumeItemList';
+import ResumeSection from '@components/portfolio/ResumeSection';
+import SkillList from '@components/portfolio/SkillList';
 
 import { SITE_URL } from '@constants/metadata';
 
 import { PROJECTS } from '@/content/portfolio/project';
+import { AWARDS, CERTIFICATIONS, EDUCATION, PROFILE, SKILLS } from '@/content/portfolio/resume';
 
 export const metadata: Metadata = {
   title: 'Joy의 포트폴리오',
@@ -19,18 +24,32 @@ export const metadata: Metadata = {
 export default function PortfolioPage() {
   return (
     <main className="mx-auto max-w-4xl px-6 py-20">
-      <header className="mb-10">
-        <h1 className="mb-4 text-3xl font-extrabold tracking-tight lg:text-5xl">Portfolio</h1>
-        <p className="text-xl text-slate-600 dark:text-slate-400">
-          프론트엔드 개발자 Joy(김여진)의 프로젝트입니다.
-        </p>
-      </header>
+      <ProfileHeader profile={PROFILE} />
 
-      <div className="grid">
-        {PROJECTS.map((project) => (
-          <ProjectCard key={project.title} project={project} />
-        ))}
-      </div>
+      <ResumeSection title="Education">
+        <ResumeItemList items={EDUCATION} />
+      </ResumeSection>
+
+      <ResumeSection title="Skills">
+        <SkillList groups={SKILLS} />
+      </ResumeSection>
+
+      <ResumeSection title="Awards">
+        <ResumeItemList items={AWARDS} />
+      </ResumeSection>
+
+      <ResumeSection title="Certifications">
+        <ResumeItemList items={CERTIFICATIONS} />
+      </ResumeSection>
+
+      <section className="pt-10">
+        <h2 className="text-2xl font-bold tracking-tight">Projects</h2>
+        <div className="grid">
+          {PROJECTS.map((project) => (
+            <ProjectCard key={project.title} project={project} />
+          ))}
+        </div>
+      </section>
     </main>
   );
 }
