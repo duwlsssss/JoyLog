@@ -28,7 +28,6 @@ export const PROJECTS = [
       'Next.js의 Error 처리 방식을 활용하여 API 오류 시에도 서비스 중단 없는 Fallback UI 제공',
     ],
     links: {
-      site: 'https://peekle-frontend-next-1v5h.vercel.app',
       github: 'https://github.com/Team-Peekle/peekle-frontend-next',
     },
   },
@@ -44,7 +43,6 @@ export const PROJECTS = [
       '복잡한 테스트 가이드를 구조화하여 전달하는 직관적인 상세 페이지 UI 설계',
     ],
     links: {
-      site: 'https://betalab.co.kr',
       github: 'https://github.com/PROJECT-NEXUS-JS/betalab-frontend',
     },
   },
@@ -61,7 +59,6 @@ export const PROJECTS = [
       'Playwright를 활용한 E2E 테스트 시나리오 설계 및 사용자 흐름 기반 자동화 테스트 구현',
     ],
     links: {
-      site: 'https://haru.it.kr',
       github: 'https://github.com/HaRu-Developers/haru-web',
     },
   },
