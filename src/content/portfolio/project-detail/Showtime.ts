@@ -7,6 +7,10 @@ export const SHOWTIME_DETAIL: ProjectDetail = {
       alt: '관리자 근무 추가 - 반복 일정 설정',
     },
     {
+      src: '/portfolio/showtime/admin-schedule-employee-search.webp',
+      alt: '관리자 근무 추가 - 직원 검색',
+    },
+    {
       src: '/portfolio/showtime/admin-schedule-filter.webp',
       alt: '관리자 근무 조회 - 업무 카테고리 필터링',
     },
