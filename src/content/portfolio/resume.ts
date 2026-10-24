@@ -29,7 +29,6 @@ import type { ResumeItem, ResumeProfile, SkillGroup } from '@/types/resume';
 
 export const PROFILE: ResumeProfile = {
   name: '김여진',
-  role: '프론트엔드 개발자',
   about: '사용자 경험을 데이터와 안정성으로 풀어내는 프론트엔드 개발자, 김여진입니다.',
   contacts: [
     { label: 'Email', href: 'mailto:rladuwls0814@gmail.com', icon: MdOutlineEmail },

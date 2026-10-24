@@ -2,7 +2,6 @@ import type { IconType } from 'react-icons';
 
 export interface ResumeProfile {
   name: string;
-  role: string;
   about: string;
   contacts: {
     label: string;
