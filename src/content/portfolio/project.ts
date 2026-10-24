@@ -6,6 +6,7 @@ import { FINANCE_SIMULATER_DETAIL } from '@/content/portfolio/project-detail/Fin
 import { HARU_DETAIL } from '@/content/portfolio/project-detail/HaRu';
 import { HWP_REPORT_TIDY_DETAIL } from '@/content/portfolio/project-detail/HwpReportTidy';
 import { JOYLOG_DETAIL } from '@/content/portfolio/project-detail/JoyLog';
+import { KIMS_BC_OFFICE_DETAIL } from '@/content/portfolio/project-detail/KimsBcOffice';
 import { PEEKLE_DETAIL } from '@/content/portfolio/project-detail/Peekle';
 import { PROMEET_DETAIL } from '@/content/portfolio/project-detail/Promeet';
 import { SHOWTIME_DETAIL } from '@/content/portfolio/project-detail/Showtime';
@@ -235,5 +236,34 @@ export const PROJECTS: Project[] = [
     links: {
       github: 'https://github.com/duwlsssss/DOPAMING',
     },
+  },
+  {
+    title: "Kim's Business Card Office",
+    period: '2024.01 ~ 2024.05',
+    description:
+      '3D 사무실을 돌아다니며 나만의 명함을 만들고, 전시 방문자의 명함을 3D 갤러리에서 감상하는 졸업 전시 웹 서비스',
+    tags: [
+      'React',
+      'Three.js',
+      'React Three Fiber',
+      'Rapier',
+      'GSAP',
+      'Zustand',
+      'Styled-components',
+      'Vite',
+    ],
+    achievements: [
+      '압축 GLB 모델과 three-stdlib Water 셰이더, 그림자를 적용해 사무실 외부·내부 3D 씬을 구성하고 진입 여부에 따라 씬 전환',
+      'Rapier 물리 엔진(RigidBody·CapsuleCollider)으로 카메라 방향 기준 WASD·방향키 이동 캐릭터와 3인칭 추적 카메라 구현',
+      'kinematic 이동 NPC와 말풍선 대화·선택지 분기로 서비스 이용 흐름을 안내하는 온보딩 구현',
+      'GSAP으로 인트로 진입, 모니터 클릭 시 포커스, 로그아웃 시 재시작 등 카메라 연출 구현',
+      'drei Html과 iframe으로 3D 모니터 안에 명함 편집 화면을 삽입하고 occlude로 3D 물체에 가려지도록 처리',
+      '여러 GLB 애니메이션을 Promise.all로 동기화한 명함 출력 연출, 카드 뒤집기, 갤러리로 연결되는 QR 코드 구현',
+      '방문자 명함을 3D 갤러리 공간에 전시하고 세션별 필터와 페이지 넘김, GSAP 카드 등장 효과 구현',
+    ],
+    links: {
+      video: 'https://www.youtube.com/watch?v=C984XiIuqX4',
+    },
+    detail: KIMS_BC_OFFICE_DETAIL,
   },
 ];
