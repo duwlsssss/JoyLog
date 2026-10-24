@@ -36,8 +36,9 @@ export const PROJECTS: Project[] = [
       'Ky 커스텀 인스턴스 기반 공통 fetcher를 설계해 베이스 URL·타임아웃 관리와 401(토큰 삭제·로그인 리다이렉트), 404(notFound) 에러 처리를 한 곳에서 수행',
       'Zod 스키마로 API 응답을 런타임에 검증하고 z.infer로 응답 타입을 추론해 서버 응답 불일치를 조기에 감지',
       '클라이언트(cookies-next)와 서버(next/headers) 환경별 인증 fetcher를 분리해 서버 컴포넌트에서도 인증 API 호출 지원',
-      '카테고리, 날짜, 지역 등 다중 조건 필터를 Query String과 동기화해 새로고침·링크 공유 시에도 검색 상태 유지',
+      '카테고리·기간·지역·가격 4종 필터를 Query String과 동기화해 새로고침·링크 공유 시에도 검색 상태 유지',
       'S3 Presigned URL 기반 클라이언트 직접 업로드를 구현하고 AbortController로 진행 중인 업로드 취소 지원',
+      '500ms 지연 로더로 짧은 로딩에서 스피너가 깜빡이지 않도록 개선',
     ],
     links: {
       github: 'https://github.com/Team-Peekle/peekle-frontend-next',
@@ -47,7 +48,8 @@ export const PROJECTS: Project[] = [
   {
     title: 'Betalab',
     period: '2025.11 ~ 2026.02',
-    description: '베타 테스터 모집부터 리워드 증정까지 전 과정을 관리하는 올인원 서비스',
+    description:
+      '베타 테스터 모집부터 리워드 증정까지 전 과정을 관리하는 올인원 서비스 (숭실대 슈퍼스타 창업경진대회 최우수상)',
     tags: [
       'Next.js',
       'TypeScript',
@@ -59,10 +61,10 @@ export const PROJECTS: Project[] = [
       'Gemini API',
     ],
     achievements: [
-      'Recharts로 만족도, 사용성, 버그 유형 등 테스트 결과 통계를 레이더·도넛·막대 차트로 시각화한 관리자 데이터 센터 페이지 구현',
+      'Recharts로 만족도, 사용성, 버그 유형 등 테스트 결과 통계 차트 6종(레이더·도넛·막대)을 단독 구현해 관리자 데이터 센터 페이지 구성',
       '조건을 충족하는 테스터만 참여하도록 예/아니오 질문을 순차 제시하는 스크리너를 구축해 테스트 데이터의 신뢰도 확보 (불일치 시 안내, 기신청자 제외, 개인정보 동의 질문 자동 추가)',
-      'Google Gemini API(JSON Schema 기반 구조화 응답)로 모집자가 입력한 참여 조건을 예/아니오 스크리너 질문으로 자동 생성하고, 응답 검증 실패·API 오류 시 원본 조건으로 대체하는 fallback 처리',
-      '피드백 폼에 Zod 스키마 유효성 검사, 임시 저장·복원, 중복 제출 방지, 참여 정보 기반 접근 가드 구현',
+      'Google Gemini API(JSON Schema 기반 구조화 응답)로 모집자가 자유롭게 입력한 참여 조건을 최대 5개의 예/아니오 스크리너 질문으로 자동 변환하고, 응답 검증 실패·API 오류 시 원본 조건으로 대체하는 fallback 처리',
+      '16개 항목 피드백 폼에 Zod 스키마 유효성 검사, 임시 저장·복원, 중복 제출 방지, 참여 정보 기반 접근 가드 구현',
       '복잡한 테스트 요강을 구조화하여 전달하는 상세 페이지 개발 및 사용자 여정을 고려한 인터페이스 최적화',
     ],
     links: {
@@ -73,7 +75,7 @@ export const PROJECTS: Project[] = [
   {
     title: 'HaRu',
     period: '2025.07 ~ 2025.08',
-    description: '소규모 팀 운영 서포팅 서비스',
+    description: '소규모 팀 운영 서포팅 서비스 (UMC 8기 데모데이 장려상)',
     tags: [
       'Next.js',
       'TypeScript',
@@ -84,11 +86,13 @@ export const PROJECTS: Project[] = [
       'Storybook',
     ],
     achievements: [
+      'FE 리드로서 디자인 토큰(컬러·폰트), lint·prettier 규칙, Sentry 등 프론트엔드 개발 환경을 세팅하고 팀 컨벤션 정립',
+      'AI 회의 매니저 기능(실시간 녹음·STT 스트리밍, 회의록 편집·재생) 프론트엔드 단독 개발',
       'AudioWorklet에서 마이크 입력을 모노로 합친 뒤 선형 보간으로 16kHz 리샘플링해 브라우저별 샘플링 레이트 차이 해소',
-      'Float32 샘플을 Int16 PCM으로 변환해 640샘플(약 40ms) 프레임 단위로 WebSocket 바이너리 전송하는 실시간 STT 스트리밍 클라이언트 구축 (일시정지 시 마이크는 유지하고 전송만 중단)',
+      'Float32 샘플을 Int16 PCM으로 변환해 오디오 전송량을 1/6로 줄이고(48kHz Float32 대비), 640샘플(약 40ms) 프레임 단위로 WebSocket 바이너리 전송하는 실시간 STT 스트리밍 클라이언트 구축 (일시정지 시 마이크는 유지하고 전송만 중단)',
       '화자 분리, 핵심 요약 등 AI 회의록 화면을 구현하고 재생 위치에 맞춰 해당 발화로 포커스를 이동하도록 세그먼트 시간축 정규화',
       '섹션·불렛 구조의 회의록 편집기 개발 (방향키 이동, Enter로 불렛 생성, 맨 앞 Backspace로 섹션 병합)',
-      'Playwright로 로그인 인증 상태를 재사용하는 E2E 테스트 시나리오 설계 및 배포 주소 대상 자동화 테스트 구현',
+      'Playwright로 로그인 인증 상태를 재사용하는 5개 핵심 사용자 흐름의 E2E 테스트 설계 및 배포 주소 대상 자동화 테스트 구현',
     ],
     links: {
       github: 'https://github.com/HaRu-Developers/haru-web',
