@@ -2,6 +2,7 @@ import type { Project } from '@/types/project';
 
 import { BETALAB_DETAIL } from '@/content/portfolio/project-detail/Betalab';
 import { CODENEWS_DETAIL } from '@/content/portfolio/project-detail/CodeNews';
+import { FINANCE_SIMULATER_DETAIL } from '@/content/portfolio/project-detail/FinanceSimulater';
 import { HARU_DETAIL } from '@/content/portfolio/project-detail/HaRu';
 import { HWP_REPORT_TIDY_DETAIL } from '@/content/portfolio/project-detail/HwpReportTidy';
 import { JOYLOG_DETAIL } from '@/content/portfolio/project-detail/JoyLog';
@@ -27,6 +28,36 @@ export const PROJECTS: Project[] = [
       github: 'https://github.com/duwlsssss/hwp-report-tidy',
     },
     detail: HWP_REPORT_TIDY_DETAIL,
+  },
+  {
+    title: 'Finance Simulater',
+    period: '2026.06 ~ 2026.10',
+    description:
+      '월급·소비·투자·대출·상환을 24개월 동안 가상으로 겪어 보는 금융 시뮬레이터 (서버 개발)',
+    tags: [
+      'Python',
+      'FastAPI',
+      'SQLAlchemy',
+      'MySQL',
+      'Redis',
+      'pytest',
+      'GitHub Actions',
+      'Claude Code Action',
+    ],
+    achievements: [
+      'spec 레포를 git 서브모듈로 연결해 openapi.yaml을 API 스펙 단일 출처(SSOT)로 두고, CI에서 서브모듈 포인터가 spec main에 없는 커밋이거나 이전 커밋으로 되돌려졌는지 검사',
+      'openapi.yaml로 실제 API 응답을 검증하는 계약 테스트를 추가해 스펙과 구현의 불일치를 조기에 발견',
+      'Claude Code Action으로 PR 자동 리뷰와 @claude 호출을 설정하고, 백그라운드 에이전트 대기 중 세션이 끝나 리뷰가 게시되지 않던 문제와 PR·이슈 코멘트 중복 응답 문제 해결',
+      'MySQL 통합·동시성 테스트 인프라를 구축하고, 대출 동시 신청 시 unique 제약 위반이 500으로 나가던 문제를 409로 변환',
+      '24턴 시뮬레이션 종료, 대출 연체 재시도·부도 처리, 신용점수 조회 API 구현',
+      '대출 조회 IDOR(소유자 검증 누락)와 422 응답에 서버 파일 경로·입력 원본값이 노출되던 보안 문제 수정',
+      'Swagger 문서를 GitHub Pages로 배포하고 회원가입부터 24턴 완료까지 E2E 테스트 작성',
+    ],
+    links: {
+      docs: 'https://finance-simulater.github.io/backend/',
+      github: 'https://github.com/finance-simulater/backend',
+    },
+    detail: FINANCE_SIMULATER_DETAIL,
   },
   {
     title: 'Peekle',
