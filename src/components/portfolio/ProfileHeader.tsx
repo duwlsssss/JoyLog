@@ -7,8 +7,7 @@ interface ProfileHeaderProps {
 export default function ProfileHeader({ profile }: ProfileHeaderProps) {
   return (
     <header className="border-b border-slate-200 pb-10 dark:border-slate-800">
-      <h1 className="mb-2 text-3xl font-extrabold tracking-tight lg:text-5xl">{profile.name}</h1>
-      <p className="mb-4 text-lg font-medium text-slate-500">{profile.role}</p>
+      <h1 className="mb-4 text-3xl font-extrabold tracking-tight lg:text-5xl">{profile.name}</h1>
       <p className="mb-6 text-xl text-slate-600 dark:text-slate-400">{profile.about}</p>
       <ul className="flex flex-wrap gap-3">
         {profile.contacts.map(({ label, href, icon: Icon }) => {

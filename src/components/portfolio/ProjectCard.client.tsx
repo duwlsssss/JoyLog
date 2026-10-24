@@ -1,4 +1,10 @@
-import { CheckCircle2, ExternalLink, Github } from 'lucide-react';
+'use client';
+
+import { useId, useState } from 'react';
+
+import { CheckCircle2, ChevronDown, ExternalLink, Github } from 'lucide-react';
+
+import ProjectDetailPanel from '@components/portfolio/ProjectDetailPanel';
 
 import { Project } from '@/types/project';
 
@@ -7,6 +13,9 @@ interface ProjectCardProps {
 }
 
 export default function ProjectCard({ project }: ProjectCardProps) {
+  const [isOpen, setIsOpen] = useState(false);
+  const detailId = useId();
+
   return (
     <section className="group relative flex flex-col gap-y-4 border-b border-slate-200 py-10 last:border-none dark:border-slate-800">
       {/* 제목 및 기간 */}
@@ -74,7 +83,37 @@ export default function ProjectCard({ project }: ProjectCardProps) {
             GitHub
           </a>
         )}
+        {project.detail && (
+          <button
+            type="button"
+            onClick={() => setIsOpen((prev) => !prev)}
+            aria-expanded={isOpen}
+            aria-controls={detailId}
+            className="ml-auto inline-flex items-center gap-1 rounded-lg px-3 py-1.5 text-sm font-medium text-slate-500 transition-colors hover:text-slate-900 dark:hover:text-slate-100"
+          >
+            {isOpen ? '상세 닫기' : '상세 보기'}
+            <ChevronDown
+              className={`size-4 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`}
+            />
+          </button>
+        )}
       </div>
+
+      {/* 상세 영역: grid-rows 0fr↔1fr 전환으로 콘텐츠 높이를 몰라도 높이 애니메이션 적용.
+          닫혀 있을 때는 inert로 포커스·스크린리더 접근을 막는다 */}
+      {project.detail && (
+        <div
+          id={detailId}
+          inert={!isOpen}
+          className={`grid transition-[grid-template-rows] duration-300 ease-in-out ${
+            isOpen ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'
+          }`}
+        >
+          <div className="overflow-hidden">
+            <ProjectDetailPanel detail={project.detail} />
+          </div>
+        </div>
+      )}
     </section>
   );
 }

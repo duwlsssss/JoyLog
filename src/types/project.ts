@@ -1,3 +1,14 @@
+export interface ProjectDetail {
+  images?: {
+    src: string;
+    alt: string;
+  }[];
+  techStack?: {
+    name: string;
+    usedIn: string;
+  }[];
+}
+
 export interface Project {
   title: string;
   period: string;
@@ -8,4 +19,5 @@ export interface Project {
     site?: string;
     github?: string;
   };
+  detail?: ProjectDetail;
 }
