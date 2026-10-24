@@ -10,24 +10,6 @@ import { SHOWTIME_DETAIL } from '@/content/portfolio/project-detail/Showtime';
 
 export const PROJECTS: Project[] = [
   {
-    title: 'JoyLog',
-    period: '2026.02 ~ now',
-    description: 'Next.js 기반의 풀스택 개발 블로그',
-    tags: ['Next.js 16', 'React 19', 'TypeScript', 'Drizzle ORM', 'PostgreSQL', 'Tailwind CSS v4'],
-    achievements: [
-      'MDX 기반 포스트 시스템 구축 및 코드 하이라이팅, 이미지 줌, 코드 복사 등 커스텀 MDX 컴포넌트 구현',
-      'Query String 기반 태그 필터링 및 페이지네이션 구현',
-      'Drizzle ORM & PostgreSQL 기반 조회수 추적 시스템 구축 (upsert 패턴, HMR 시 DB 커넥션 중복 방지)',
-      '동적 메타데이터, OG 이미지, sitemap/robots 자동화를 통한 SEO 체계 구축 및 shadcn/ui 커스터마이징을 통한 반응형 디자인과 다크모드 구현',
-      'Lefthook 기반 Git Hooks 자동화로 코드 품질 유지 체계 구축 (lint·타입체크, commitlint, 빌드 검증)',
-    ],
-    links: {
-      site: 'https://joy-log-kappa.vercel.app',
-      github: 'https://github.com/duwlsssss/JoyLog.git',
-    },
-    detail: JOYLOG_DETAIL,
-  },
-  {
     title: 'Peekle',
     period: '2025.08 ~ now',
     description: '시니어 친화적 UX를 적용한 이벤트 큐레이션 및 커뮤니티 서비스',
@@ -44,6 +26,24 @@ export const PROJECTS: Project[] = [
       github: 'https://github.com/Team-Peekle/peekle-frontend-next',
     },
     detail: PEEKLE_DETAIL,
+  },
+  {
+    title: 'JoyLog',
+    period: '2026.02 ~ 2026.03',
+    description: 'Next.js 기반의 풀스택 개발 블로그',
+    tags: ['Next.js 16', 'React 19', 'TypeScript', 'Drizzle ORM', 'PostgreSQL', 'Tailwind CSS v4'],
+    achievements: [
+      'MDX 기반 포스트 시스템 구축 및 코드 하이라이팅, 이미지 줌, 코드 복사 등 커스텀 MDX 컴포넌트 구현',
+      'Query String 기반 태그 필터링 및 페이지네이션 구현',
+      'Drizzle ORM & PostgreSQL 기반 조회수 추적 시스템 구축 (upsert 패턴, HMR 시 DB 커넥션 중복 방지)',
+      '동적 메타데이터, OG 이미지, sitemap/robots 자동화를 통한 SEO 체계 구축 및 shadcn/ui 커스터마이징을 통한 반응형 디자인과 다크모드 구현',
+      'Lefthook 기반 Git Hooks 자동화로 코드 품질 유지 체계 구축 (lint·타입체크, commitlint, 빌드 검증)',
+    ],
+    links: {
+      site: 'https://joy-log-kappa.vercel.app',
+      github: 'https://github.com/duwlsssss/JoyLog.git',
+    },
+    detail: JOYLOG_DETAIL,
   },
   {
     title: 'Betalab',
