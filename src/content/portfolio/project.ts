@@ -3,12 +3,31 @@ import type { Project } from '@/types/project';
 import { BETALAB_DETAIL } from '@/content/portfolio/project-detail/Betalab';
 import { CODENEWS_DETAIL } from '@/content/portfolio/project-detail/CodeNews';
 import { HARU_DETAIL } from '@/content/portfolio/project-detail/HaRu';
+import { HWP_REPORT_TIDY_DETAIL } from '@/content/portfolio/project-detail/HwpReportTidy';
 import { JOYLOG_DETAIL } from '@/content/portfolio/project-detail/JoyLog';
 import { PEEKLE_DETAIL } from '@/content/portfolio/project-detail/Peekle';
 import { PROMEET_DETAIL } from '@/content/portfolio/project-detail/Promeet';
 import { SHOWTIME_DETAIL } from '@/content/portfolio/project-detail/Showtime';
 
 export const PROJECTS: Project[] = [
+  {
+    title: 'hwp-report-tidy',
+    period: '2026.10 ~ now',
+    description: '한글(HWP/HWPX) 보고서에서 줄 끝에 잘린 단어를 자간 조정으로 붙이는 자동화 도구',
+    tags: ['Python', 'pyhwpx', 'HWPX', 'Claude API'],
+    achievements: [
+      '보고서 마무리 때마다 잘린 단어를 찾아 수동으로 자간을 맞추던 반복 작업을 자동화',
+      '잘린 줄을 좁혀 뒷부분을 윗줄로 올리고, 안 되면 넓혀 앞부분을 아랫줄로 내리는 2단계 자간 조정 구현 (본문·표·중첩 표 지원)',
+      '커서 이동 방식은 51곳 중 11곳만 찾아, 임시 hwpx의 linesegarray(줄 시작 위치)를 파싱하는 방식으로 전환해 줄 나눔 판별 정확도 개선',
+      '자간 한 단계마다 임시 저장 후 다시 읽어 단어가 한 줄에 모였는지·문단 줄 수가 늘지 않았는지 검증하고, 실패 시 Undo로 원래 값을 복구한 뒤 형광펜으로 표시',
+      '오탈자·안 쓰는 스타일 점검과 직접 확인할 항목만 담은 CSV 리포트 제공, --check로 실제 적용 후 되돌리는 미리 보기 지원',
+      '(선택) Claude API 문장 줄이기 제안: 문단마다 전송 내용을 먼저 보여주고 동의한 경우에만 전송, 문서는 수정하지 않음',
+    ],
+    links: {
+      github: 'https://github.com/duwlsssss/hwp-report-tidy',
+    },
+    detail: HWP_REPORT_TIDY_DETAIL,
+  },
   {
     title: 'Peekle',
     period: '2025.08 ~ now',
