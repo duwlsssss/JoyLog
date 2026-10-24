@@ -22,6 +22,8 @@ export interface Project {
   links: {
     site?: string;
     github?: string;
+    docs?: string;
+    video?: string;
   };
   detail?: ProjectDetail;
 }

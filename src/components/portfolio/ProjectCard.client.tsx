@@ -2,7 +2,14 @@
 
 import { useId, useState } from 'react';
 
-import { CheckCircle2, ChevronDown, ExternalLink, Github } from 'lucide-react';
+import {
+  BookOpen,
+  CheckCircle2,
+  ChevronDown,
+  CirclePlay,
+  ExternalLink,
+  Github,
+} from 'lucide-react';
 
 import ProjectDetailPanel from '@components/portfolio/ProjectDetailPanel';
 
@@ -70,6 +77,28 @@ export default function ProjectCard({ project }: ProjectCardProps) {
           >
             <ExternalLink className="size-4" />
             웹사이트 방문
+          </a>
+        )}
+        {project.links.docs && (
+          <a
+            href={project.links.docs}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-sm font-medium transition-colors hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:hover:bg-slate-800"
+          >
+            <BookOpen className="size-4" />
+            API 문서
+          </a>
+        )}
+        {project.links.video && (
+          <a
+            href={project.links.video}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-sm font-medium transition-colors hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:hover:bg-slate-800"
+          >
+            <CirclePlay className="size-4" />
+            실행 영상
           </a>
         )}
         {project.links.github && (
