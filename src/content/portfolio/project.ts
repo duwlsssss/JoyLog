@@ -61,24 +61,6 @@ export const PROJECTS: Project[] = [
     detail: FINANCE_SIMULATER_DETAIL,
   },
   {
-    title: 'Peekle',
-    period: '2025.08 ~ now',
-    description: '시니어 친화적 UX를 적용한 이벤트 큐레이션 및 커뮤니티 서비스',
-    tags: ['Next.js', 'TypeScript', 'Ky', 'Zod', 'TanStack Query', 'Zustand', 'Tailwind CSS'],
-    achievements: [
-      'Ky 커스텀 인스턴스 기반 공통 fetcher를 설계해 베이스 URL·타임아웃 관리와 401(토큰 삭제·로그인 리다이렉트), 404(notFound) 에러 처리를 한 곳에서 수행',
-      'Zod 스키마로 API 응답을 런타임에 검증하고 z.infer로 응답 타입을 추론해 서버 응답 불일치를 조기에 감지',
-      '클라이언트(cookies-next)와 서버(next/headers) 환경별 인증 fetcher를 분리해 서버 컴포넌트에서도 인증 API 호출 지원',
-      '카테고리·기간·지역·가격 4종 필터를 Query String과 동기화해 새로고침·링크 공유 시에도 검색 상태 유지',
-      'S3 Presigned URL 기반 클라이언트 직접 업로드를 구현하고 AbortController로 진행 중인 업로드 취소 지원',
-      '500ms 지연 로더로 짧은 로딩에서 스피너가 깜빡이지 않도록 개선',
-    ],
-    links: {
-      github: 'https://github.com/Team-Peekle/peekle-frontend-next',
-    },
-    detail: PEEKLE_DETAIL,
-  },
-  {
     title: 'JoyLog',
     period: '2026.02 ~ 2026.03',
     description: 'Next.js 기반의 풀스택 개발 블로그',
@@ -123,6 +105,24 @@ export const PROJECTS: Project[] = [
       github: 'https://github.com/PROJECT-NEXUS-JS/betalab-frontend',
     },
     detail: BETALAB_DETAIL,
+  },
+  {
+    title: 'Peekle',
+    period: '2025.08 ~ 2025.11',
+    description: '시니어 친화적 UX를 적용한 이벤트 큐레이션 및 커뮤니티 서비스',
+    tags: ['Next.js', 'TypeScript', 'Ky', 'Zod', 'TanStack Query', 'Zustand', 'Tailwind CSS'],
+    achievements: [
+      'Ky 커스텀 인스턴스 기반 공통 fetcher를 설계해 베이스 URL·타임아웃 관리와 401(토큰 삭제·로그인 리다이렉트), 404(notFound) 에러 처리를 한 곳에서 수행',
+      'Zod 스키마로 API 응답을 런타임에 검증하고 z.infer로 응답 타입을 추론해 서버 응답 불일치를 조기에 감지',
+      '클라이언트(cookies-next)와 서버(next/headers) 환경별 인증 fetcher를 분리해 서버 컴포넌트에서도 인증 API 호출 지원',
+      '카테고리·기간·지역·가격 4종 필터를 Query String과 동기화해 새로고침·링크 공유 시에도 검색 상태 유지',
+      'S3 Presigned URL 기반 클라이언트 직접 업로드를 구현하고 AbortController로 진행 중인 업로드 취소 지원',
+      '500ms 지연 로더로 짧은 로딩에서 스피너가 깜빡이지 않도록 개선',
+    ],
+    links: {
+      github: 'https://github.com/Team-Peekle/peekle-frontend-next',
+    },
+    detail: PEEKLE_DETAIL,
   },
   {
     title: 'HaRu',
