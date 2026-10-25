@@ -105,6 +105,22 @@ export const SKILLS: SkillGroup[] = [
   },
 ];
 
+export const ACTIVITIES: ResumeItem[] = [
+  {
+    title: 'UMC 8기 WEB 파트장',
+    organization: 'UMC 숭실대',
+    period: '2025.03 ~ 2025.08',
+    description:
+      '웹 파트 스터디 운영 및 워크북 미션 코드 리뷰 진행, 최종 프로젝트 WEB TF로 20개 팀 평가 및 질의응답 진행',
+  },
+  {
+    title: 'UMC 7기 WEB 챌린저',
+    organization: 'UMC 숭실대',
+    period: '2024.09 ~ 2025.02',
+    description: '웹 파트 스터디 참여 및 워크북 미션 수행',
+  },
+];
+
 export const AWARDS: ResumeItem[] = [
   {
     title: '슈퍼스타 창업경진대회 최우수상',

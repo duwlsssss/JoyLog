@@ -9,7 +9,14 @@ import SkillList from '@components/portfolio/SkillList';
 import { SITE_URL } from '@constants/metadata';
 
 import { PROJECTS } from '@/content/portfolio/project';
-import { AWARDS, CERTIFICATIONS, EDUCATION, PROFILE, SKILLS } from '@/content/portfolio/resume';
+import {
+  ACTIVITIES,
+  AWARDS,
+  CERTIFICATIONS,
+  EDUCATION,
+  PROFILE,
+  SKILLS,
+} from '@/content/portfolio/resume';
 
 export const metadata: Metadata = {
   title: 'Joy의 포트폴리오',
@@ -32,6 +39,10 @@ export default function PortfolioPage() {
 
       <ResumeSection title="Skills">
         <SkillList groups={SKILLS} />
+      </ResumeSection>
+
+      <ResumeSection title="Activities">
+        <ResumeItemList items={ACTIVITIES} />
       </ResumeSection>
 
       <ResumeSection title="Awards">
