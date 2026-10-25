@@ -83,11 +83,11 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <main className="mx-auto flex min-h-screen max-w-7xl flex-col px-5">
+          <div className="mx-auto flex min-h-screen max-w-7xl flex-col px-5">
             <Header />
-            <main className="flex flex-1 flex-col">{children}</main>
+            <main className="flex flex-1">{children}</main>
             <Footer />
-          </main>
+          </div>
         </ThemeProvider>
       </body>
     </html>
