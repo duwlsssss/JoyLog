@@ -121,8 +121,10 @@ if: github.event_name == 'issue_comment' && github.event.issue.pull_request && c
 No buffered inline comments
 ```
 
-`code-review` 플러그인은 리뷰 전에 사전 점검(PR 상태 확인, `CLAUDE.md` 찾기)을 **서브에이전트 2개에 백그라운드로** 맡겼다. 메인 세션은 "결과 기다릴게"라고 답했다. 도구 호출 없이 텍스트로만 답했으니 이 답이 곧 최종 `result`가 되고, 세션은 그대로 끝났다.
-GitHub Actions에서는 세션이 끝나면 `claude` 프로세스를 종료하기 때문에, 서브에이전트도 함께 사라졌다. 실제 리뷰를 할 에이전트는 띄워 보지도 못했다.
+`code-review` 플러그인은 리뷰 전에 사전 점검(PR 상태 확인, `CLAUDE.md` 찾기)을 **서브에이전트 2개**에 맡겼다. 백그라운드 실행을 따로 요청하지 않았는데(`"unset": 2`), 최근 Claude Code는 서브에이전트를 기본값으로 백그라운드에서 실행해서 2개 모두 백그라운드로 돌았다(`"started_in_background": 2`).
+메인 세션은 "결과 기다릴게"라고 답했다. 도구 호출 없이 텍스트로만 답했으니 이 답이 곧 최종 `result`가 된다. 그런데 claude-code-action은 첫 `result`를 받으면 그 뒤 메시지를 기다리지 않고 실행을 끝낸다. 서브에이전트도 함께 사라졌고, 실제 리뷰를 할 에이전트는 띄워 보지도 못했다.
+
+나만 겪은 문제는 아니었다. claude-code-action에 같은 증상의 이슈가 여러 개 열려 있다([#1499](https://github.com/anthropics/claude-code-action/issues/1499), [#1646](https://github.com/anthropics/claude-code-action/issues/1646)).
 
 플러그인을 빼고, claude-code-action 공식 예제([pr-review-comprehensive.yml](https://github.com/anthropics/claude-code-action/blob/main/examples/pr-review-comprehensive.yml)) 방식대로 `prompt`에 리뷰 지시를 직접 썼다.
 
@@ -184,3 +186,5 @@ git commit --allow-empty -m "test: Claude 자동 리뷰 게시 확인용 빈 커
 - [anthropics/claude-code-action](https://github.com/anthropics/claude-code-action)
 - [claude-code-action 사용 문서](https://github.com/anthropics/claude-code-action/blob/main/docs/usage.md)
 - [Events that trigger workflows - issue_comment](https://docs.github.com/en/actions/writing-workflows/choosing-when-your-workflow-runs/events-that-trigger-workflows#issue_comment)
+- [claude-code-action #1499 - Background subagents orphaned: runClaudeWithSdk breaks the query() loop on the first result](https://github.com/anthropics/claude-code-action/issues/1499)
+- [claude-code-action #1646 - code-review plugin exits green without posting](https://github.com/anthropics/claude-code-action/issues/1646)
