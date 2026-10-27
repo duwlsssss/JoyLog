@@ -154,6 +154,12 @@ export const mdxComponents: MDXRemoteProps['components'] = {
       <div className="[&_p]:mt-0">{children}</div>
     </li>
   ),
+  // 인용문
+  blockquote: ({ children }) => (
+    <blockquote className="border-primary/60 bg-muted/40 text-muted-foreground my-6 rounded-r-lg border-l-4 px-4 py-3 break-keep [&_p]:mt-0">
+      {children}
+    </blockquote>
+  ),
   // 링크
   a: ({ children, href }) => (
     <a
