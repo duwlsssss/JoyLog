@@ -121,7 +121,7 @@ if: github.event_name == 'issue_comment' && github.event.issue.pull_request && c
 No buffered inline comments
 ```
 
-`code-review` 플러그인은 리뷰 전에 사전 점검(PR 상태 확인, `CLAUDE.md` 찾기)을 **서브에이전트 2개에 백그라운드로** 맡겼다. 메인 세션은 "결과 기다릴게"라고 답했고, 이 답이 마지막 응답이 되어 그대로 끝났다.
+`code-review` 플러그인은 리뷰 전에 사전 점검(PR 상태 확인, `CLAUDE.md` 찾기)을 **서브에이전트 2개에 백그라운드로** 맡겼다. 메인 세션은 "결과 기다릴게"라고 답했다. 도구 호출 없이 텍스트로만 답했으니 이 답이 곧 최종 `result`가 되고, 세션은 그대로 끝났다.
 GitHub Actions에서는 세션이 끝나면 `claude` 프로세스를 종료하기 때문에, 서브에이전트도 함께 사라졌다. 실제 리뷰를 할 에이전트는 띄워 보지도 못했다.
 
 플러그인을 빼고, claude-code-action 공식 예제([pr-review-comprehensive.yml](https://github.com/anthropics/claude-code-action/blob/main/examples/pr-review-comprehensive.yml)) 방식대로 `prompt`에 리뷰 지시를 직접 썼다.
