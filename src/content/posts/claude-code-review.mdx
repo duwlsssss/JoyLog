@@ -5,9 +5,9 @@ description: 체크는 매번 초록불이었는데 리뷰 코멘트는 한 번�
 tags: ['CI', 'AI']
 faq:
   - q: 'claude-code-action 리뷰 워크플로가 success인데 PR에 코멘트가 안 달리는 이유는 무엇인가요?'
-    a: 'prompt를 지정한 자동 실행 모드에서는 Bash 도구가 기본으로 막혀 있어 gh pr comment를 실행하지 못합니다. claude_args에 --allowedTools로 리뷰에 필요한 gh 명령(gh pr view, gh pr diff, gh pr comment)을 허용해야 합니다. 실행 자체는 에러 없이 끝나기 때문에 체크는 success로 표시됩니다.'
+    a: '원인은 여러 가지일 수 있습니다. prompt에 리뷰 지시를 직접 쓰는 자동 실행 모드라면 claude_args에 --allowedTools로 리뷰에 필요한 gh 명령(gh pr view, gh pr diff, gh pr comment)을 허용해야 합니다. code-review 플러그인을 쓴다면 서브에이전트가 끝나기 전에 세션이 종료되는지, 워크플로 파일을 고친 PR이라 실행이 건너뛰어졌는지도 확인해야 합니다. 어느 경우든 실행 자체는 에러 없이 끝나기 때문에 체크는 success로 표시됩니다.'
   - q: 'code-review 플러그인을 쓰면 리뷰 코멘트가 게시되지 않는 경우가 있나요?'
-    a: '플러그인이 리뷰 에이전트를 백그라운드로 띄우고, 메인 세션이 결과를 기다리지 않은 채 종료되면 아무것도 게시되지 않습니다. 이 경우 플러그인 대신 prompt에 리뷰 지시를 직접 쓰고, 서브에이전트 없이 세션 안에서 리뷰를 끝낸 뒤 게시하도록 지시하면 됩니다.'
+    a: '플러그인이 서브에이전트를 백그라운드로 띄우고, 메인 세션이 결과를 기다리지 않은 채 종료되면 아무것도 게시되지 않습니다. 이 경우 플러그인 대신 prompt에 리뷰 지시를 직접 쓰고, 서브에이전트 없이 세션 안에서 리뷰를 끝낸 뒤 게시하도록 지시하면 됩니다.'
   - q: '"Skipping action due to workflow validation" 경고는 왜 뜨나요?'
     a: 'claude-code-action은 PR의 워크플로 파일이 기본 브랜치(main)의 파일과 내용이 같을 때만 실행됩니다. 워크플로 파일을 수정한 PR에서는 보안상 실행을 건너뛰고, 체크는 success로 끝납니다. 워크플로 변경은 main에 머지한 뒤, 그 파일을 건드리지 않는 다른 PR에서 확인해야 합니다.'
 ---
@@ -19,7 +19,7 @@ GitHub Actions에 [claude-code-action](https://github.com/anthropics/claude-code
 - PR 코멘트에 `@claude`를 언급하면 **질문에 답하게** 했다.
 
 그런데 이 자동 리뷰가 **3개월 동안 단 한 번도 코멘트를 남기지 않았다.** 체크는 매번 초록불이었다.
-원인이 하나가 아니라 3개여서 정리해 둔다.
+원인은 결국 하나였는데, 거기까지 가는 동안 헛짚고 함정에도 빠졌다. 그 과정을 정리해 둔다.
 
 ---
 
@@ -66,15 +66,26 @@ claude-code-action은 두 가지 모드로 돈다.
 | 자동 실행(agent) 모드 | `prompt`를 직접 지정 | Claude가 직접 게시 필요 |
 
 리뷰 워크플로는 `prompt`를 지정했으니 **자동 실행 모드**다. 그래서 Claude가 직접 `gh pr comment`로 PR에 코멘트를 달아야 한다.
-그런데 처음 워크플로에는 `claude_args`가 없어서 Claude에게 `gh`를 실행할 권한이 없었다.
+그런데 처음 워크플로에는 `claude_args`가 없어서 Claude에게 `gh`를 실행할 권한이 없다고 판단했다.
 
 `claude_args`로 리뷰에 필요한 `gh` 명령만 허용했다. (다음엔 과정을 볼 수 있게 `show_full_output`도 함께 켰다.)
 
 ```yaml
 claude_args: |
   --allowedTools "Bash(gh pr view:*),Bash(gh pr diff:*),Bash(gh pr comment:*),..."
-  show_full_output: true # 원인 확인용, 나중에 제거
+show_full_output: true # 원인 확인용, 나중에 제거
 ```
+
+나중에 알고 보니 이게 처음부터 원인이었는지는 확실하지 않다. `code-review` 플러그인의 명령 파일에는 필요한 권한이 이미 선언돼 있었다.
+
+```yaml
+# anthropics/claude-code — plugins/code-review/commands/code-review.md
+allowed-tools: Bash(gh pr comment:*), Bash(gh pr diff:*), Bash(gh pr view:*), ...
+```
+
+플러그인을 쓰는 동안에는 이 설정으로 `gh` 권한이 열려 있었을 수 있다. 수정 전 로그에도 권한 거부는 0건이었다.
+
+그래도 `--allowedTools`는 결국 필요한 설정이 됐다. 원인 2에서 플러그인을 빼고 `prompt`에 지시를 직접 쓰게 되면서, 권한을 열어 줄 플러그인이 없어졌기 때문이다.
 
 ### ➕ `@claude` 중복 응답
 
@@ -110,8 +121,8 @@ if: github.event_name == 'issue_comment' && github.event.issue.pull_request && c
 No buffered inline comments
 ```
 
-`code-review` 플러그인은 리뷰를 **서브에이전트 2개에 나눠 백그라운드**에 맡겼다. 메인 세션은 "결과 기다릴게"라는 결과로 답하고 이 답이 마지막 응답이 되어 그대로 끝났다. 
-GitHub Actions에서는 세션이 끝나면 `Claude` 프로세스를 종료하기 때문에, 서브에이전트도 리뷰를 마치기 전에 함께 사라졌다.
+`code-review` 플러그인은 리뷰 전에 사전 점검(PR 상태 확인, `CLAUDE.md` 찾기)을 **서브에이전트 2개에 백그라운드로** 맡겼다. 메인 세션은 "결과 기다릴게"라고 답했고, 이 답이 마지막 응답이 되어 그대로 끝났다.
+GitHub Actions에서는 세션이 끝나면 `claude` 프로세스를 종료하기 때문에, 서브에이전트도 함께 사라졌다. 실제 리뷰를 할 에이전트는 띄워 보지도 못했다.
 
 플러그인을 빼고, claude-code-action 공식 예제([pr-review-comprehensive.yml](https://github.com/anthropics/claude-code-action/blob/main/examples/pr-review-comprehensive.yml)) 방식대로 `prompt`에 리뷰 지시를 직접 썼다.
 
