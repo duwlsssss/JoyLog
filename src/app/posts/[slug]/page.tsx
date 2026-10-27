@@ -139,6 +139,8 @@ export default async function PostPage({ params }: Props) {
                 rehypePrettyCode,
                 {
                   theme: 'dark-plus',
+                  // 언어 미지정 블록도 data-language를 받아야 인라인 코드 스타일이 적용되지 않음
+                  defaultLang: { block: 'plaintext' },
                   // 빈 줄은 공백으로 유지
                   onVisitLine(node: Element) {
                     if (node.children.length === 0) {
