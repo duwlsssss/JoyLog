@@ -13,11 +13,23 @@ export interface ProjectDetail {
   }[];
 }
 
+export interface ProjectCase {
+  // 접힌 상태에서 bullet로 보이는 한 줄 — 문제와 결과가 함께 드러나게 쓴다
+  title: string;
+  problem: string;
+  cause: string;
+  decision: string;
+  action: string;
+  result: string;
+}
+
 export interface Project {
   title: string;
   period: string;
   description: string;
   tags: string[];
+  // 대표 문제 해결 사례: Key Solutions 맨 위에 펼칠 수 있는 bullet로 보인다
+  cases?: ProjectCase[];
   achievements: string[];
   links: {
     site?: string;

@@ -11,6 +11,7 @@ import {
   Github,
 } from 'lucide-react';
 
+import ProjectCaseItem from '@components/portfolio/ProjectCaseItem';
 import ProjectDetailPanel from '@components/portfolio/ProjectDetailPanel';
 
 import { Project } from '@/types/project';
@@ -54,6 +55,9 @@ export default function ProjectCard({ project }: ProjectCardProps) {
       <div className="mt-2 space-y-3">
         <h4 className="text-xs font-bold tracking-widest uppercase">Key Solutions</h4>
         <ul className="space-y-2.5">
+          {project.cases?.map((projectCase) => (
+            <ProjectCaseItem key={projectCase.title} projectCase={projectCase} />
+          ))}
           {project.achievements.map((item, idx) => (
             <li
               key={idx}
