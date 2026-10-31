@@ -14,6 +14,20 @@ export default function ProjectDetailPanel({ detail }: ProjectDetailPanelProps) 
 
   return (
     <div className="space-y-8 pt-6">
+      {detail.techStack && detail.techStack.length > 0 && (
+        <div className="space-y-3">
+          <h4 className="text-xs font-bold tracking-widest uppercase">Tech Stack</h4>
+          <dl className="divide-y divide-slate-200 dark:divide-slate-800">
+            {detail.techStack.map((tech) => (
+              <div key={tech.name} className="flex flex-col gap-1 py-2.5 sm:flex-row sm:gap-6">
+                <dt className="w-48 shrink-0 text-sm font-semibold">{tech.name}</dt>
+                <dd className="text-sm text-slate-600 dark:text-slate-400">{tech.usedIn}</dd>
+              </div>
+            ))}
+          </dl>
+        </div>
+      )}
+
       {detail.images && detail.images.length > 0 && (
         // 썸네일을 같은 비율로 맞추고 넘치는 부분은 아래쪽을 잘라낸다 (확대 시 라이트박스에서는 원본 전체 표시)
         <div
@@ -28,20 +42,6 @@ export default function ProjectDetailPanel({ detail }: ProjectDetailPanelProps) 
               <ZoomImage src={image.src} alt={image.alt} caption={image.alt} />
             </div>
           ))}
-        </div>
-      )}
-
-      {detail.techStack && detail.techStack.length > 0 && (
-        <div className="space-y-3">
-          <h4 className="text-xs font-bold tracking-widest uppercase">Tech Stack</h4>
-          <dl className="divide-y divide-slate-200 dark:divide-slate-800">
-            {detail.techStack.map((tech) => (
-              <div key={tech.name} className="flex flex-col gap-1 py-2.5 sm:flex-row sm:gap-6">
-                <dt className="w-48 shrink-0 text-sm font-semibold">{tech.name}</dt>
-                <dd className="text-sm text-slate-600 dark:text-slate-400">{tech.usedIn}</dd>
-              </div>
-            ))}
-          </dl>
         </div>
       )}
     </div>
