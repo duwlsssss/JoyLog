@@ -1,8 +1,11 @@
 import type { Project } from '@/types/project';
 
-import { BETALAB_DETAIL } from '@/content/portfolio/project-detail/Betalab';
+import { BETALAB_CASES, BETALAB_DETAIL } from '@/content/portfolio/project-detail/Betalab';
 import { CODENEWS_DETAIL } from '@/content/portfolio/project-detail/CodeNews';
-import { FINANCE_SIMULATER_DETAIL } from '@/content/portfolio/project-detail/FinanceSimulater';
+import {
+  FINANCE_SIMULATER_CASES,
+  FINANCE_SIMULATER_DETAIL,
+} from '@/content/portfolio/project-detail/FinanceSimulater';
 import { HARU_DETAIL } from '@/content/portfolio/project-detail/HaRu';
 import { HWP_REPORT_TIDY_DETAIL } from '@/content/portfolio/project-detail/HwpReportTidy';
 import { JOYLOG_DETAIL } from '@/content/portfolio/project-detail/JoyLog';
@@ -45,14 +48,12 @@ export const PROJECTS: Project[] = [
       'GitHub Actions',
       'Claude Code Action',
     ],
+    cases: FINANCE_SIMULATER_CASES,
     achievements: [
-      'spec 레포를 git 서브모듈로 연결해 openapi.yaml을 API 스펙 단일 출처(SSOT)로 두고, CI에서 서브모듈 포인터가 spec main에 없는 커밋이거나 이전 커밋으로 되돌려졌는지 검사',
-      'openapi.yaml로 실제 API 응답을 검증하는 계약 테스트를 추가해 스펙과 구현의 불일치를 조기에 발견',
-      'Claude Code Action으로 PR 자동 리뷰와 @claude 호출을 설정하고, 백그라운드 에이전트 대기 중 세션이 끝나 리뷰가 게시되지 않던 문제와 PR·이슈 코멘트 중복 응답 문제 해결',
-      'MySQL 통합·동시성 테스트 인프라를 구축하고, 대출 동시 신청 시 unique 제약 위반이 500으로 나가던 문제를 409로 변환',
-      '24턴 시뮬레이션 종료, 대출 연체 재시도·부도 처리, 신용점수 조회 API 구현',
-      '대출 조회 IDOR(소유자 검증 누락)와 422 응답에 서버 파일 경로·입력 원본값이 노출되던 보안 문제 수정',
-      'Swagger 문서를 GitHub Pages로 배포하고 회원가입부터 24턴 완료까지 E2E 테스트 작성',
+      'merge 과정에서 spec 서브모듈 포인터가 원격에 없는 커밋으로 덮어써져 스펙 자동 갱신 PR이 멈춘 문제를 계기로, PR마다 포인터의 spec main 포함 여부와 과거 커밋으로의 되돌림을 검사하도록 CI 구성',
+      'loan_id만 알면 타인의 대출을 조회할 수 있던 IDOR와 422 응답의 서버 파일 경로 노출을 수정하고, 라우터 인증 배선 누락을 잡는 통합 테스트 추가',
+      'Claude Code Action 자동 리뷰가 백그라운드 에이전트 대기 중 세션 종료로 게시되지 않던 문제와 @claude 호출 시 중복 응답 문제 해결',
+      '24턴 시뮬레이션 종료, 대출 연체 재시도·부도 처리, 신용점수 조회 API를 구현하고 회원가입부터 24턴 완료까지 E2E 테스트 작성',
     ],
     links: {
       docs: 'https://finance-simulater.github.io/backend/',
@@ -93,13 +94,14 @@ export const PROJECTS: Project[] = [
       'Tailwind CSS',
       'Gemini API',
     ],
+    cases: BETALAB_CASES,
     achievements: [
       'Recharts로 만족도, 사용성, 버그 유형 등 테스트 결과 통계 차트 6종(레이더·도넛·막대)을 단독 구현해 관리자 데이터 센터 페이지 구성',
       '조건을 충족하는 테스터만 참여하도록 예/아니오 질문을 순차 제시하는 스크리너를 구축해 테스트 데이터의 신뢰도 확보 (불일치 시 안내, 기신청자 제외, 개인정보 동의 질문 자동 추가)',
       'Google Gemini API(JSON Schema 기반 구조화 응답)로 모집자가 자유롭게 입력한 참여 조건을 최대 5개의 예/아니오 스크리너 질문으로 자동 변환하고, 응답 검증 실패·API 오류 시 원본 조건으로 대체하는 fallback 처리',
       '16개 항목 피드백 폼에 Zod 스키마 유효성 검사, 임시 저장·복원, 중복 제출 방지, 참여 정보 기반 접근 가드 구현',
-      '이미지·영상이 표시되지 않던 테스트 상세 페이지를 리팩토링해, URL을 분석해 YouTube·동영상 파일·이미지를 구분 렌더링하는 공통 미디어 컴포넌트 구현',
-      '상세 소개 영역의 실제 높이를 측정해 일정 높이를 넘을 때만 접기 버튼을 노출하도록 개선',
+      '승인된 테스터만 피드백을 작성해야 하는데 진입 조건이 테스트 완료(TEST_COMPLETED) 상태로 잡혀 있던 문제를 수정하고, 참여 상태(승인 대기·승인·제출 완료 등)별 버튼 문구와 동작을 한 곳에서 결정하도록 정리해 재제출 차단',
+      '소개글 길이와 관계없이 항상 접히고 더보기 버튼이 보이던 상세 페이지를, 렌더링 후 실제 높이(scrollHeight)를 측정해 630px을 넘을 때만 접도록 수정 (QA 발견)',
     ],
     links: {
       github: 'https://github.com/PROJECT-NEXUS-JS/betalab-frontend',
@@ -140,8 +142,7 @@ export const PROJECTS: Project[] = [
     achievements: [
       'FE 리드로서 디자인 토큰(컬러·폰트), lint·prettier 규칙, Sentry 등 프론트엔드 개발 환경을 세팅하고 팀 컨벤션 정립',
       'AI 회의 매니저 기능(실시간 녹음·STT 스트리밍, 회의록 편집·재생) 프론트엔드 개발',
-      'AudioWorklet에서 마이크 입력을 모노로 합친 뒤 실제 입력 샘플레이트 기준 선형 보간으로 16kHz 리샘플링해 브라우저·기기별 샘플레이트 차이에 대응',
-      '16kHz 리샘플링과 Float32→Int16 PCM 변환으로 전송량을 1/6로 줄이고(48kHz Float32 대비), 고정 크기 프레임 단위로 WebSocket 바이너리 전송하는 실시간 STT 스트리밍 클라이언트 구축',
+      '헤더 없는 16kHz·모노·16bit PCM을 전제로 처리하는 STT 서버에 맞춰, 48kHz Float32 마이크 입력을 AudioWorklet에서 16kHz로 선형 보간 리샘플링하고 Int16으로 변환해 20ms(1280B) 프레임 단위로 WebSocket 스트리밍 (전송량 초당 192KB → 32KB)',
       '화자 분리, 핵심 요약 등 AI 회의록 화면을 구현하고 재생 위치에 맞춰 해당 발화로 포커스를 이동하도록 세그먼트 시간축 정규화',
       '섹션·불렛 구조의 회의록 편집기 개발 (방향키 이동, Enter로 불렛 생성, 맨 앞 Backspace로 섹션 병합)',
       'Playwright로 로그인 인증 상태를 재사용하는 5개 핵심 사용자 흐름의 E2E 테스트 설계 및 배포 주소 대상 자동화 테스트 구현',

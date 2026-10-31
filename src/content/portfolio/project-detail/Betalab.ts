@@ -1,4 +1,21 @@
-import type { ProjectDetail } from '@/types/project';
+import type { ProjectCase, ProjectDetail } from '@/types/project';
+
+export const BETALAB_CASES: ProjectCase[] = [
+  {
+    title:
+      '모집자가 등록한 YouTube·동영상·외부 이미지가 상세 페이지에서 표시되지 않던 문제를 URL 유형별 미디어 컴포넌트로 해결',
+    problem:
+      '모집자가 테스트 소개에 YouTube 링크, 동영상 파일, 외부 이미지 URL을 자유롭게 등록하는데, 상세 페이지에서 이미지·영상이 표시되지 않음',
+    cause:
+      '기존 CustomImage가 모든 URL을 next/image로 렌더링. next/image는 이미지가 아닌 YouTube·동영상 URL을 그릴 수 없고, next.config의 remotePatterns에 없는 외부 호스트 이미지는 불러오지 못함',
+    decision:
+      '사용자가 입력하는 URL의 호스트는 미리 알 수 없어 remotePatterns에 계속 추가하는 방식으로는 해결되지 않는다고 판단. URL로 미디어 유형을 판별해 맞는 태그로 렌더링하고, 이미지는 Next 이미지 최적화(unoptimized)를 포기하는 대신 임의 호스트를 허용',
+    action:
+      'CustomMedia 공통 컴포넌트를 만들어 YouTube ID가 추출되면 iframe, 동영상 확장자면 video, 나머지는 이미지로 분기. 이후 QA에서 발견된 이미지 잘림은 고정 크기(854×533)를 없애고 YouTube를 aspect-video로 감싸 해결',
+    result:
+      'YouTube·동영상·이미지가 섞인 소개글도 상세 페이지에서 유형에 맞게 표시되고, 고정 크기로 잘리던 이미지가 컨테이너 폭에 맞게 표시됨',
+  },
+];
 
 export const BETALAB_DETAIL: ProjectDetail = {
   imageAspect: '5 / 4',
