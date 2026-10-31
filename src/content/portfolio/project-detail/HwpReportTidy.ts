@@ -1,4 +1,21 @@
-import type { ProjectDetail } from '@/types/project';
+import type { ProjectCase, ProjectDetail } from '@/types/project';
+
+export const HWP_REPORT_TIDY_CASES: ProjectCase[] = [
+  {
+    title:
+      '보고서 마무리 때마다 잘린 단어를 손으로 찾아 자간을 맞추던 작업을 자동화해 1건당 약 1시간 → 20분, 팀 5명이 실사용',
+    problem:
+      '보고서를 마무리할 때마다 줄 끝에서 잘린 단어(평가제|도, manage|ment)를 하나씩 찾아 Alt+Shift+N/W로 자간을 맞춰야 했고, 이 반복 작업을 인턴이 맡고 있었음',
+    cause:
+      "보고서는 띄어쓰기 간격을 일정하게 유지하려고 줄 나눔 기준을 '글자'로 두고 작업해, 단어가 줄 끝에서 잘리는 일이 계속 생김",
+    decision:
+      "줄 나눔 기준을 '어절'로 바꾸면 단어는 안 잘리지만 띄어쓰기 간격이 들쭉날쭉해지므로, 기준은 그대로 두고 사람이 하던 자간 조정을 자동화하기로 함. 보고서 문장은 맥락에 따라 뜻이 달라지므로 오탈자·스타일은 찾아서 알려주기만 하고 자동 수정하지 않음",
+    action:
+      '잘린 줄을 좁혀 뒷부분을 윗줄로 올리고, 안 되면 넓혀 앞부분을 아랫줄로 내리는 2단계 자간 조정을 구현. 단계마다 임시 저장 후 다시 읽어 결과를 검증하고, 실패하면 Undo로 복구한 뒤 형광펜으로 표시. 원본은 건드리지 않고 새 파일로 저장하며 --check로 미리 보기 제공',
+    result:
+      '보고서 1건 마무리 시간이 약 1시간에서 20분으로 줄었고, 팀 5명이 실제로 사용 중. 인턴이 맡던 자간 정리 작업을 도구로 처리하게 되어 인턴은 다른 업무를 맡게 됨',
+  },
+];
 
 export const HWP_REPORT_TIDY_DETAIL: ProjectDetail = {
   imageAspect: '5 / 2',
