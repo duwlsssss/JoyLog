@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import Link from 'next/link';
 
 import { getAllPosts } from '@libs/posts';
@@ -7,11 +8,21 @@ import PostCard from '@components/posts/PostCard.client';
 
 const POSTS_PER_PAGE = 5;
 
-export default async function HomePage({
-  searchParams,
-}: {
+interface HomePageProps {
   searchParams: Promise<{ tag?: string; page?: string }>;
-}) {
+}
+
+// 태그·페이지 필터 결과는 홈 목록과 내용이 겹치므로 색인에서 빼고, 글 링크는 계속 따라가게 한다
+// noindex 페이지에 다른 주소를 가리키는 canonical을 함께 주면 신호가 충돌하므로 canonical은 홈에만 둔다
+export async function generateMetadata({ searchParams }: HomePageProps): Promise<Metadata> {
+  const { tag, page } = await searchParams;
+  const isFiltered = Boolean(tag) || Boolean(page);
+
+  if (isFiltered) return { robots: { index: false, follow: true } };
+  return { alternates: { canonical: '/' } };
+}
+
+export default async function HomePage({ searchParams }: HomePageProps) {
   const { tag: selectedTag, page } = await searchParams;
   const allPosts = await getAllPosts();
 

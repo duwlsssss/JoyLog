@@ -33,6 +33,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     description: post.metadata.description ?? `${post.metadata.title} 포스트 읽기`,
     keywords: post.metadata.tags,
     authors: [{ name: 'Joy', url: SITE_URL }],
+    alternates: { canonical: `/posts/${slug}` },
     openGraph: {
       title: post.metadata.title,
       description: post.metadata.description ?? `${post.metadata.title} 포스트 읽기`,
