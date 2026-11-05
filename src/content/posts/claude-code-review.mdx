@@ -5,9 +5,11 @@ description: 체크는 매번 초록불이었는데 리뷰 코멘트는 한 번�
 tags: ['CI', 'AI']
 faq:
   - q: 'claude-code-action 리뷰 워크플로가 success인데 PR에 코멘트가 안 달리는 이유는 무엇인가요?'
-    a: '원인은 여러 가지일 수 있습니다. prompt에 리뷰 지시를 직접 쓰는 자동 실행 모드라면 claude_args에 --allowedTools로 리뷰에 필요한 gh 명령(gh pr view, gh pr diff, gh pr comment)을 허용해야 합니다. code-review 플러그인을 쓴다면 서브에이전트가 끝나기 전에 세션이 종료되는지, 워크플로 파일을 고친 PR이라 실행이 건너뛰어졌는지도 확인해야 합니다. 어느 경우든 실행 자체는 에러 없이 끝나기 때문에 체크는 success로 표시됩니다.'
+    a: '원인은 여러 가지일 수 있습니다. code-review 플러그인을 쓴다면 prompt에 --comment 인자가 있는지 확인해야 합니다. 없으면 플러그인은 리뷰만 하고 코멘트를 게시하지 않습니다. 또 서브에이전트가 백그라운드로 실행되면 액션이 결과를 기다리지 않고 끝날 수 있어, 액션 step에 CLAUDE_CODE_DISABLE_BACKGROUND_TASKS 환경 변수를 넣어야 합니다. 인라인 코멘트를 쓰려면 claude_args의 --allowedTools에 mcp__github_inline_comment__create_inline_comment를 넣어야 액션이 해당 MCP 서버를 띄웁니다. 플러그인 없이 prompt에 리뷰 지시를 직접 쓴다면 claude_args의 --allowedTools로 gh pr view, gh pr diff, gh pr comment를 허용해야 합니다. 워크플로 파일을 고친 PR이라 실행이 건너뛰어졌는지도 확인해야 합니다. 어느 경우든 에러 없이 끝나기 때문에 체크는 success로 표시됩니다.'
   - q: 'code-review 플러그인을 쓰면 리뷰 코멘트가 게시되지 않는 경우가 있나요?'
-    a: '플러그인이 서브에이전트를 백그라운드로 띄우고, 메인 세션이 결과를 기다리지 않은 채 종료되면 아무것도 게시되지 않습니다. 이 경우 플러그인 대신 prompt에 리뷰 지시를 직접 쓰고, 서브에이전트 없이 세션 안에서 리뷰를 끝낸 뒤 게시하도록 지시하면 됩니다.'
+    a: '세 가지를 확인해야 합니다. 첫째, 플러그인은 --comment 인자가 없으면 PR에 코멘트를 게시하지 않습니다. 둘째, 플러그인이 띄운 서브에이전트가 백그라운드로 실행되면 claude-code-action은 첫 result에서 실행을 끝내 버립니다. 액션 step의 env에 CLAUDE_CODE_DISABLE_BACKGROUND_TASKS: 1을 넣으면 서브에이전트가 동기로 실행되어 리뷰가 끝까지 진행됩니다. 셋째, 플러그인은 문제를 찾으면 인라인 코멘트 도구로 게시하는데, 이 도구는 claude_args의 --allowedTools에 넣어야만 액션이 제공합니다. 없으면 "문제없음" 요약만 게시되고, 문제를 찾은 리뷰는 게시되지 않습니다.'
+  - q: 'code-review 플러그인 명령 파일에 allowed-tools가 있는데 왜 워크플로에도 --allowedTools가 필요한가요?'
+    a: 'allowed-tools는 이미 있는 도구를 승인 없이 쓰게 해 주는 권한입니다. 인라인 코멘트 도구는 claude-code-action이 띄우는 MCP 서버가 제공하는데, 액션은 워크플로 claude_args의 --allowedTools에 mcp__github_inline_comment__ 도구가 있을 때만 이 서버를 띄웁니다. 플러그인 명령 파일은 이 판단에 쓰이지 않습니다.'
   - q: '"Skipping action due to workflow validation" 경고는 왜 뜨나요?'
     a: 'claude-code-action은 PR의 워크플로 파일이 기본 브랜치(main)의 파일과 내용이 같을 때만 실행됩니다. 워크플로 파일을 수정한 PR에서는 보안상 실행을 건너뛰고, 체크는 success로 끝납니다. 워크플로 변경은 main에 머지한 뒤, 그 파일을 건드리지 않는 다른 PR에서 확인해야 합니다.'
 ---
@@ -19,7 +21,7 @@ GitHub Actions에 [claude-code-action](https://github.com/anthropics/claude-code
 - PR 코멘트에 `@claude`를 언급하면 **질문에 답하게** 했다.
 
 그런데 이 자동 리뷰가 **3개월 동안 단 한 번도 코멘트를 남기지 않았다.** 체크는 매번 초록불이었다.
-원인은 결국 하나였는데, 거기까지 가는 동안 헤맸다. 그 과정을 정리해 둔다.
+원인은 세 개였다. 하나를 고치는 사이 나머지도 같이 가려져서, 남은 원인들은 한참 뒤에야 하나씩 드러났다. 그 과정을 정리해 둔다.
 
 ---
 
@@ -76,16 +78,16 @@ claude_args: |
 show_full_output: true # 원인 확인용, 나중에 제거
 ```
 
-나중에 알고 보니 이게 처음부터 원인이었는지는 확실하지 않다. `code-review` 플러그인의 명령 파일에는 필요한 권한이 이미 선언돼 있었다.
+나중에 알고 보니 `gh` 명령 권한은 원인이 아니었다. `code-review` 플러그인의 명령 파일에는 필요한 권한이 이미 선언돼 있었다.
 
 ```yaml
 # anthropics/claude-code — plugins/code-review/commands/code-review.md
-allowed-tools: Bash(gh pr comment:*), Bash(gh pr diff:*), Bash(gh pr view:*), ...
+allowed-tools: Bash(gh issue view:*), Bash(gh search:*), Bash(gh issue list:*), Bash(gh pr comment:*), Bash(gh pr diff:*), Bash(gh pr view:*), Bash(gh pr list:*), mcp__github_inline_comment__create_inline_comment
 ```
 
-플러그인을 쓰는 동안에는 이 설정으로 `gh` 권한이 열려 있었을 수 있다. 수정 전 로그에도 권한 거부는 0건이었다.
+수정 전 로그에도 권한 거부는 0건이었다. 나중에 플러그인으로 돌아갔을 때 `--allowedTools` 없이 `gh pr comment`로 요약 코멘트가 게시되는 것도 확인했다(4차 시도). 다만 마지막 줄의 인라인 코멘트 도구는 사정이 달랐는데, 이건 5차 시도에서 다룬다.
 
-그래도 `--allowedTools`는 결국 필요한 설정이 됐다. 2차 시도에서 플러그인을 빼고 `prompt`에 지시를 직접 쓰게 되면서, 권한을 열어 줄 플러그인이 없어졌기 때문이다.
+그래도 2차 시도에서는 `--allowedTools`가 필요한 설정이 됐다. 플러그인을 빼고 `prompt`에 지시를 직접 쓰게 되면서, 권한을 열어 줄 플러그인이 없어졌기 때문이다.
 
 ### ➕ `@claude` 중복 응답
 
@@ -99,6 +101,8 @@ if: github.event.issue.pull_request == null
 # claude.yml — PR 코멘트만 처리
 if: github.event_name == 'issue_comment' && github.event.issue.pull_request && contains(github.event.comment.body, '@claude')
 ```
+
+(이후 Claude 워크플로 5개를 공식 기본 구성인 `claude.yml`, `claude-code-review.yml` 2개로 합치면서 이 조건 분기 자체가 없어졌다.)
 
 이걸로 해결될 줄 알았다.
 
@@ -126,7 +130,7 @@ No buffered inline comments
 
 나만 겪은 문제는 아니었다. claude-code-action에 같은 증상의 이슈가 여러 개 열려 있다([#1499](https://github.com/anthropics/claude-code-action/issues/1499), [#1646](https://github.com/anthropics/claude-code-action/issues/1646)).
 
-플러그인을 빼고, claude-code-action 공식 예제([pr-review-comprehensive.yml](https://github.com/anthropics/claude-code-action/blob/main/examples/pr-review-comprehensive.yml)) 방식대로 `prompt`에 리뷰 지시를 직접 썼다.
+마침 팀원이 다른 블로그를 참고해서, 리뷰 코멘트를 한국어로 받고 리뷰 기준도 우리가 정하자고 했다. 플러그인은 코멘트 형식과 리뷰 기준이 정해져 있다. 그래서 플러그인을 빼고, claude-code-action 공식 예제([pr-review-comprehensive.yml](https://github.com/anthropics/claude-code-action/blob/main/examples/pr-review-comprehensive.yml)) 방식대로 `prompt`에 리뷰 지시를 직접 썼다.
 
 ```yaml
 prompt: |
@@ -144,7 +148,7 @@ claude_args: |
   --allowedTools "mcp__github_inline_comment__create_inline_comment,Bash(gh pr view:*),Bash(gh pr diff:*),Bash(gh pr comment:*)"
 ```
 
-`--allowedTools`도 실제로 쓰는 도구만 남기고 줄였다.
+`--allowedTools`도 실제로 쓰는 도구만 남기고 줄였다. 백그라운드 문제는 "서브에이전트나 백그라운드 작업을 쓰지 말라"는 지시로 막았다.
 
 ---
 
@@ -172,12 +176,226 @@ git commit --allow-empty -m "test: Claude 자동 리뷰 게시 확인용 빈 커
 
 ---
 
+## 4차 시도. 다시 보니, 원인은 하나가 아니었다
+
+---
+
+글을 정리하면서 두 가지가 걸렸다.
+
+- "서브에이전트를 쓰지 말라"는 지시는 Claude가 따라 줄 때만 효과가 있다.
+- 플러그인이 서브에이전트를 끝까지 기다렸다면, 정말 코멘트가 달렸을까?
+
+### 첫 번째 원인을 확실하게 막는 방법
+
+[#1499](https://github.com/anthropics/claude-code-action/issues/1499)에는 우회 방법이 정리돼 있었다. 액션 step에 환경 변수 하나를 넣는 것이다.
+
+```yaml
+env:
+  CLAUDE_CODE_DISABLE_BACKGROUND_TASKS: '1'
+```
+
+이 값을 켜면 Claude에게 백그라운드 실행 옵션 자체가 주어지지 않는다. 서브에이전트가 동기로 실행되니, 실제 실행이 끝날 때 나오는 `result` 하나만 남는다. 프롬프트로 부탁하는 것과 달리 Claude가 지시를 따르는지에 기대지 않는다. 이슈의 댓글을 보면 플러그인은 그대로 두고 이 값만 추가해서 해결한 사례들이 있었고, 서브에이전트 여러 개를 병렬로 띄우는 것도 그대로 동작했다고 한다.
+
+### 숨어 있던 두 번째 원인, `--comment`
+
+플러그인 명령 파일의 이력을 따라가 봤다. 우리가 플러그인을 쓰던 기간에 받아 온 버전([db8834ba1d](https://github.com/anthropics/claude-code/blob/db8834ba1d/plugins/code-review/commands/code-review.md))의 7단계에 이런 줄이 있었다.
+
+```
+If `--comment` argument was NOT provided, stop here. Do not post any GitHub comments.
+```
+
+처음 워크플로의 `prompt`에는 `--comment`가 없었다. 서브에이전트가 끝까지 실행됐더라도, 리뷰 결과는 로그에만 출력되고 PR에는 아무것도 게시되지 않았을 것이다. 코멘트를 남기지 않는 게 기본값이 된 건 2025년 12월 커밋(`Make no-comment the default for /code-review`)부터였다.
+
+여기까지 찾은 원인은 두 개였다.
+
+| 원인 | 증상 | 해결 |
+|---|---|---|
+| 백그라운드 서브에이전트 | 리뷰 전에 세션 종료 | `CLAUDE_CODE_DISABLE_BACKGROUND_TASKS: '1'` |
+| `--comment` 누락 | 리뷰가 끝나도 게시 안 함 | `prompt` 끝에 `--comment` |
+
+2차 시도에서 플러그인을 뺀 건 한국어 리뷰를 위해서였는데, 그 선택이 두 원인을 한꺼번에 없앴다. 그래서 두 번째 원인은 보이지 않았다.
+
+### 플러그인으로 다시 돌아가기
+
+원인을 알았으니 플러그인을 다시 붙여 봤다. Claude 워크플로를 정리하는 김에 자동 리뷰도 플러그인 방식으로 바꿨다.
+
+```yaml
+- uses: anthropics/claude-code-action@v1
+  env:
+    CLAUDE_CODE_DISABLE_BACKGROUND_TASKS: '1'
+  with:
+    claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+    plugin_marketplaces: 'https://github.com/anthropics/claude-code.git'
+    plugins: 'code-review@claude-code-plugins'
+    prompt: '/code-review:code-review ${{ github.repository }}/pull/${{ github.event.pull_request.number }} --comment'
+    claude_args: |
+      --append-system-prompt "모든 리뷰 코멘트는 한국어로 작성하세요."
+```
+
+`--allowedTools`는 넣지 않았다. 필요한 권한은 플러그인 명령 파일에 선언돼 있다고 봤기 때문이다. 한국어 코멘트는 `--append-system-prompt`로 요청했다.
+
+이번에도 워크플로를 고친 PR에서는 확인할 수 없으니, 머지한 뒤 다른 PR에서 확인했다.
+
+- **빈 커밋 PR**: 코멘트가 달리지 않았다. 플러그인 1단계가 "리뷰가 필요 없는 PR(사소한 변경 등)"이면 멈추게 돼 있어서 건너뛴 것으로 보인다. prompt 방식에서는 빈 커밋에도 "검토할 게 없다"고 답했던 것과 다르다.
+- **실제 코드를 바꾼 PR**: 37초 만에 코멘트가 달렸다.
+
+> ## Code review
+>
+> No issues found. Checked for bugs and CLAUDE.md compliance.
+
+게시는 됐다. 그런데 **영어**다. 플러그인 명령 파일에 "문제없음" 코멘트 형식이 영어 문장으로 정해져 있어서, 한국어로 쓰라는 지시보다 그 형식을 따른 것 같다. 이 PR에서는 지적할 문제가 없어서, 문제를 찾았을 때 남기는 인라인 코멘트가 한국어로 달리는지는 아직 확인하지 못했다.
+
+---
+
+## 5차 시도. 버그를 찾았는데, 코멘트를 달 도구가 없다
+
+---
+
+인라인 코멘트를 확인하려면 플러그인이 지적할 문제가 있어야 한다. 그래서 일부러 버그를 넣은 PR을 올렸다. 점수를 0~100으로 보정하는 함수에서 `min`과 `max`를 뒤바꿨다.
+
+```python
+def clamp_score(score: int, minimum: int = 0, maximum: int = 100) -> int:
+    if minimum > maximum:
+        raise ValueError(f"minimum({minimum})은 maximum({maximum})보다 클 수 없습니다.")
+    return min(minimum, max(maximum, score))  # 원래는 max(minimum, min(maximum, score))
+```
+
+테스트는 바로 실패했다. 그런데 리뷰 체크는 또 `success`인데 코멘트가 없다. 이번엔 로그에 권한 거부가 1건 있었다.
+
+### `show_full_output`으로 다시 들여다보기
+
+`show_full_output`을 잠깐 켜고 다시 돌렸다. 리뷰 자체는 잘 진행됐다. 서브에이전트가 PR 상태와 `CLAUDE.md`를 확인했고, 메인 세션은 diff를 읽고 `min`/`max`가 뒤바뀐 버그를 정확히 찾았다. 막힌 건 그다음, 게시 단계였다.
+
+{/* 📸 [캡처 필요] show_full_output 로그 — ToolSearch "No matching deferred tools found"와 gh api "This command requires approval" 부분
+![인라인 코멘트 도구를 찾지 못한 로그](https://mcawm4stpvqmonk2.public.blob.vercel-storage.com/claude-code-review/inlineToolMissingLog.png)
+*/}
+
+```
+"query": "select:mcp__github_inline_comment__create_inline_comment"
+→ "No matching deferred tools found"
+
+"command": "gh api repos/finance-simulater/backend/pulls/93/comments ... -f body='**버그**: `min`/`max`가 뒤바뀌어 있습니다. ...'"
+→ "This command requires approval"
+
+"result": "I found one bug in PR #93, but I couldn't post the comment because the command to post it needed approval.
+...
+- **Validation agents:** I didn't launch them. A one-line diff is easy enough to check by hand.
+- **Inline comment tool:** `mcp__github_inline_comment__create_inline_comment` wasn't available, so I tried `gh api` for an inline comment, and that was the call that needed approval.
+
+The comment I intended to post is in Korean. ..."
+```
+
+1. 인라인 코멘트를 달려고 `mcp__github_inline_comment__create_inline_comment` 도구를 찾았는데, **도구 자체가 없었다.**
+2. 그래서 `gh api`로 직접 올리려 했지만, 플러그인이 허용한 명령이 아니라 거부됐다. 권한 거부 1건이 이것이었다.
+3. "버그는 찾았는데 게시를 못 했다"는 `result`로 끝났고, 에러가 아니니 체크는 `success`였다.
+
+참고로 Claude가 올리려던 코멘트 본문은 이미 한국어였다("The comment I intended to post is in Korean."). 그리고 diff가 한 줄뿐이라 지적 사항을 다시 검증하는 서브에이전트는 띄우지 않고 직접 확인했다고 남겼다. 플러그인이 모든 단계를 매번 그대로 밟는 건 아니다.
+
+### 권한은 있는데 도구가 없다
+
+플러그인 명령 파일의 `allowed-tools`에는 이 도구가 분명히 있다. 그런데도 없다는 건, 허용과 별개로 **도구를 제공하는 MCP 서버가 뜨지 않았다**는 뜻이다. 이 서버는 Claude Code가 아니라 claude-code-action이 띄운다. 액션 코드를 열어 봤다.
+
+```ts
+// anthropics/claude-code-action — src/modes/agent/index.ts
+// Parse allowed tools from user's claude_args
+const userClaudeArgs = process.env.CLAUDE_ARGS || "";
+const allowedTools = parseAllowedTools(userClaudeArgs);
+```
+
+```ts
+// anthropics/claude-code-action — src/mcp/install-mcp-server.ts
+const hasInlineCommentTools = allowedToolsList.some(
+  (tool) =>
+    tool === "mcp__github_inline_comment" ||
+    tool.startsWith("mcp__github_inline_comment__"),
+);
+
+// Include inline comment server for PRs when requested via allowed tools
+if (
+  isEntityContext(context) &&
+  context.isPR &&
+  (hasGitHubMcpTools || hasInlineCommentTools)
+) {
+  baseMcpConfig.mcpServers.github_inline_comment = {
+```
+
+액션은 워크플로의 `claude_args`에서 `--allowedTools`만 읽어서, 거기에 인라인 코멘트 도구가 있을 때만 서버를 띄운다. 플러그인 명령 파일은 Claude가 실행된 뒤에 읽히니, 서버를 띄울지 정하는 시점에는 보이지 않는다.
+
+| 설정 위치 | 하는 일 | 이번 PR에서 |
+|---|---|---|
+| 워크플로 `claude_args`의 `--allowedTools` | 액션이 MCP 서버를 **띄울지** 결정 + 사용 허용 | 비어 있음 → 서버 안 뜸 |
+| 플러그인 명령 파일의 `allowed-tools` | 이미 있는 도구를 승인 없이 **쓰게** 허용 | `gh pr view`, `gh pr diff`는 통과, `gh api`는 거부 |
+
+태그 모드(`@claude`)도 마찬가지다. 태그 모드가 기본으로 넣는 도구 목록(`update_claude_comment`, CI 조회 도구 등)에도 인라인 코멘트 도구는 없다.
+
+4차 시도의 "No issues found"가 게시된 것도 이걸로 설명된다. 플러그인은 문제가 없으면 `gh pr comment`로 요약을 남기고, 문제가 있으면 인라인 코멘트 도구를 쓴다. 우리가 플러그인을 처음 쓰던 버전([db8834ba1d](https://github.com/anthropics/claude-code/blob/db8834ba1d/plugins/code-review/commands/code-review.md))도 같았다.
+
+```
+If `--comment` argument IS provided and NO issues were found, post a summary comment using `gh pr comment` and stop.
+...
+9. Post inline comments for each issue using `mcp__github_inline_comment__create_inline_comment` with `confirmed: true`.
+```
+
+즉 **문제가 없을 때만 게시가 되는 설정**이었다. 처음 워크플로에도 `--allowedTools`가 없었으니, 앞의 두 원인을 고쳤더라도 버그를 찾은 리뷰는 게시되지 않았을 것이다. 2차 시도의 prompt 방식이 동작한 건 `--allowedTools`에 이 도구를 직접 넣었기 때문이었다.
+
+### 한 줄 추가
+
+```yaml
+claude_args: |
+  --allowedTools "mcp__github_inline_comment__create_inline_comment"
+  --append-system-prompt "모든 리뷰 코멘트는 한국어로 작성하세요."
+```
+
+`gh api` 같은 명령은 열지 않았다. 정해진 도구로만 게시하게 두는 편이 안전하다.
+
+머지한 뒤 같은 버그 PR에 main을 반영해 다시 돌렸다. 53초 뒤 버그가 있는 줄에 코멘트가 달렸다. **한국어로.**
+
+{/* 📸 [캡처 필요] PR의 한국어 인라인 코멘트 (scoring.py 4번째 줄, suggestion 포함)
+![한국어 인라인 리뷰 코멘트](https://mcawm4stpvqmonk2.public.blob.vercel-storage.com/claude-code-review/koreanInlineComment.png)
+*/}
+
+> **버그:** `min`/`max`가 뒤바뀌어 있어 입력과 관계없이 항상 `minimum`을 반환합니다.
+>
+> `max(maximum, score)`는 항상 `maximum` 이상이고, `minimum <= maximum`이 보장되므로 바깥쪽 `min(minimum, ...)`은 항상 `minimum`이 됩니다. 예를 들어 `clamp_score(50)`은 50이 아니라 0을 반환합니다.
+
+수정 제안(`suggestion`)까지 붙어 있어서 버튼 하나로 반영할 수 있었다. 고정 문구인 "No issues found"는 영어지만, Claude가 직접 쓰는 지적 코멘트는 `--append-system-prompt`대로 한국어로 나온다.
+
+최종적으로 찾은 원인은 세 개다.
+
+| 원인 | 증상 | 해결 |
+|---|---|---|
+| 백그라운드 서브에이전트 | 리뷰 전에 세션 종료 | `CLAUDE_CODE_DISABLE_BACKGROUND_TASKS: '1'` |
+| `--comment` 누락 | 리뷰가 끝나도 게시 안 함 | `prompt` 끝에 `--comment` |
+| 인라인 코멘트 도구 누락 | 문제를 찾으면 게시 못 함 (문제없음 요약은 게시됨) | `--allowedTools "mcp__github_inline_comment__create_inline_comment"` |
+
+---
+
+## 두 방식 비교
+
+---
+
+| | prompt 직접 작성 (2차) | 플러그인 + `--comment` (4차) |
+|---|---|---|
+| 코멘트 언어 | 한국어 | 지적 코멘트는 한국어, "문제없음" 고정 문구는 영어 |
+| 리뷰 기준 | 직접 정함 (테스트 누락까지 지적) | 확실한 버그, CLAUDE.md 위반만 지적 |
+| 리뷰 과정 | 세션 하나가 리뷰 | 서브에이전트 여러 개가 병렬로 리뷰하고, 지적 사항을 한 번 더 검증. 작은 PR에서는 일부 단계를 생략하기도 함 |
+| push 후 재리뷰 | 매번 리뷰 | Claude가 이미 코멘트한 PR이면 멈춤 |
+| 사소한 PR | 리뷰함 | 건너뜀 |
+| 필요한 설정 | `--allowedTools` | env, `--comment`, `--allowedTools`(인라인 코멘트 도구) |
+
+어느 쪽이 정답이라기보다 팀이 리뷰에서 무엇을 원하는지에 따라 고르면 된다.
+
+---
+
 ## 결론
 
-- **`success`는 "에러 없이 끝났다"는 뜻이지 "원하는 일을 했다"는 뜻이 아니다.** 세 번 모두 체크는 초록불이었다. 결과(여기선 코멘트)가 실제로 생겼는지를 확인해야 한다.
+- **`success`는 "에러 없이 끝났다"는 뜻이지 "원하는 일을 했다"는 뜻이 아니다.** 다섯 번 모두 체크는 초록불이었다. 결과(여기선 코멘트)가 실제로 생겼는지를 확인해야 한다.
 - **로그를 볼 수 있게 만드는 게 먼저다.** `show_full_output`을 켜고 나서야 진짜 원인이 보였다. 로그 없이 추측만으로는 원인을 찾기 어렵다.
-- **AI 에이전트도 실행 환경의 수명을 따른다.** 백그라운드 작업은 로컬에선 자연스럽지만, CI에서는 세션이 끝나는 순간 같이 사라진다.
+- **증상이 사라졌다고 원인을 다 안 것은 아니다.** 플러그인을 뺀 변경이 두 원인을 한꺼번에 가렸다. 고친 뒤에도 "왜 고쳐졌는지"를 설명할 수 있어야 한다.
+- **AI 에이전트도 실행 환경의 수명을 따른다.** 백그라운드 작업은 로컬에선 자연스럽지만, CI에서는 세션이 끝나는 순간 같이 사라진다. 프롬프트로 부탁하기보다 설정으로 막는 게 확실하다.
 - **워크플로 변경은 main에 머지한 뒤, 그 파일을 건드리지 않는 PR에서 확인한다.**
+- **확인하려는 경로를 실제로 타게 만든다.** "문제없음" 코멘트가 달렸다고 리뷰가 동작한다고 믿었지만, 문제를 찾았을 때는 다른 도구를 썼다. 일부러 버그를 넣고 나서야 세 번째 원인이 보였다.
+- **허용한다고 도구가 생기지는 않는다.** 권한 목록(`allowed-tools`)은 있는 도구를 쓰게 할 뿐이다. MCP 서버처럼 실행 환경이 띄워 줘야 하는 도구는 그 환경(여기선 액션)의 설정을 따라가 봐야 한다.
 
 ---
 
@@ -188,3 +406,6 @@ git commit --allow-empty -m "test: Claude 자동 리뷰 게시 확인용 빈 커
 - [Events that trigger workflows - issue_comment](https://docs.github.com/en/actions/writing-workflows/choosing-when-your-workflow-runs/events-that-trigger-workflows#issue_comment)
 - [claude-code-action #1499 - Background subagents orphaned: runClaudeWithSdk breaks the query() loop on the first result](https://github.com/anthropics/claude-code-action/issues/1499)
 - [claude-code-action #1646 - code-review plugin exits green without posting](https://github.com/anthropics/claude-code-action/issues/1646)
+- [code-review 플러그인 명령 파일 (anthropics/claude-code@db8834ba1d)](https://github.com/anthropics/claude-code/blob/db8834ba1d/plugins/code-review/commands/code-review.md)
+- [claude-code-action 인라인 코멘트 서버 기동 조건 (src/mcp/install-mcp-server.ts)](https://github.com/anthropics/claude-code-action/blob/c0949c50a78c1ec8ce2647db36629b870e715d0c/src/mcp/install-mcp-server.ts#L150-L156)
+- [claude-code-action 에이전트 모드의 allowedTools 파싱 (src/modes/agent/index.ts)](https://github.com/anthropics/claude-code-action/blob/c0949c50a78c1ec8ce2647db36629b870e715d0c/src/modes/agent/index.ts#L92-L94)
