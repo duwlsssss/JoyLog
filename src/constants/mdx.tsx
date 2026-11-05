@@ -84,12 +84,13 @@ export const mdxComponents: MDXRemoteProps['components'] = {
   code: ({ children, ...props }) => {
     // rehype-pretty-code가 적용된 코드 블록 내부에 있는 code 태그인지 확인
     const isInline = !props['data-language'];
+    // 공백 없는 긴 인라인 코드(타입·경로 등)가 모바일에서 문단 밖으로 넘치지 않도록 글자 단위 줄바꿈 허용
     return (
       <code
         {...props}
         className={
           isInline
-            ? 'relative rounded bg-gray-200 px-[0.3rem] py-[0.2rem] font-mono font-semibold dark:bg-zinc-700/70 dark:text-zinc-100'
+            ? 'relative rounded bg-gray-200 px-[0.3rem] py-[0.2rem] font-mono font-semibold wrap-anywhere dark:bg-zinc-700/70 dark:text-zinc-100'
             : undefined
         }
       >

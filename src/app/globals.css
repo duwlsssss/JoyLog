@@ -133,6 +133,12 @@
   body {
     @apply bg-background text-foreground;
   }
+  /* 넘치는 요소가 생겨도 페이지 가로 스크롤은 막는다.
+     hidden은 스크롤 컨테이너를 만들어 sticky를 깨뜨리므로 clip 사용 */
+  html,
+  body {
+    overflow-x: clip;
+  }
 }
 
 /* 그라디언트 배경 */
