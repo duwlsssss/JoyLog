@@ -8,12 +8,12 @@ import { MDXRemote } from 'next-mdx-remote/rsc';
 import rehypePrettyCode from 'rehype-pretty-code';
 import remarkGfm from 'remark-gfm';
 
-import { incrementViews } from '@libs/actions';
 import { getAdjacentPosts, getPostBySlug } from '@libs/posts';
 
 import PostNavigation from '@components/posts/PostNavigation';
 import ReadingProgressBar from '@components/posts/ReadingProgressBar.client';
 import ViewCounter from '@components/posts/ViewCounter';
+import ViewTracker from '@components/posts/ViewTracker.client';
 
 import { mdxComponents } from '@constants/mdx';
 import { SITE_URL } from '@constants/metadata';
@@ -48,9 +48,6 @@ export default async function PostPage({ params }: Props) {
   const { slug } = await params;
   const post = await getPostBySlug(slug);
   const { prev, next } = await getAdjacentPosts(slug);
-
-  // 조회수 증가는 비동기로 처리 - 렌더링 차단 x
-  incrementViews(slug).catch((err) => console.error(err));
 
   const articleNode = {
     '@type': 'TechArticle',
@@ -103,6 +100,7 @@ export default async function PostPage({ params }: Props) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
       />
       <ReadingProgressBar />
+      <ViewTracker slug={slug} />
       {/* 상단 정보 */}
       <header className="not-prose mb-10 flex flex-col gap-4 border-b pb-10">
         <h1 className="text-2xl font-extrabold tracking-tight">{post.metadata.title}</h1>
