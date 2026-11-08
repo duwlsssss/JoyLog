@@ -7,7 +7,7 @@ import {
   FINANCE_SIMULATER_CASES,
   FINANCE_SIMULATER_DETAIL,
 } from '@/content/portfolio/project-detail/FinanceSimulater';
-import { HARU_DETAIL } from '@/content/portfolio/project-detail/HaRu';
+import { HARU_CASES, HARU_DETAIL } from '@/content/portfolio/project-detail/HaRu';
 import {
   HWP_REPORT_TIDY_CASES,
   HWP_REPORT_TIDY_DETAIL,
@@ -148,6 +148,7 @@ export const PROJECTS: Project[] = [
       'Sentry',
       'Storybook',
     ],
+    cases: HARU_CASES,
     achievements: [
       'FE 리드로서 디자인 토큰(컬러·폰트), lint·prettier 규칙, Sentry 등 프론트엔드 개발 환경을 세팅하고 팀 컨벤션 정립',
       'AI 회의 매니저 기능(실시간 녹음·STT 스트리밍, 회의록 편집·재생) 프론트엔드 개발',
