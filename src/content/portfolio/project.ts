@@ -14,7 +14,7 @@ import {
 import { JOYLOG_CASES, JOYLOG_DETAIL } from '@/content/portfolio/project-detail/JoyLog';
 import { KIMS_BC_OFFICE_DETAIL } from '@/content/portfolio/project-detail/KimsBcOffice';
 import { PEEKLE_CASES, PEEKLE_DETAIL } from '@/content/portfolio/project-detail/Peekle';
-import { PROMEET_DETAIL } from '@/content/portfolio/project-detail/Promeet';
+import { PROMEET_CASES, PROMEET_DETAIL } from '@/content/portfolio/project-detail/Promeet';
 import { SHOWTIME_DETAIL } from '@/content/portfolio/project-detail/Showtime';
 
 export const PROJECTS: Project[] = [
@@ -170,12 +170,14 @@ export const PROJECTS: Project[] = [
       'Styled-components',
       'Vite',
     ],
+    cases: PROMEET_CASES,
     achievements: [
-      'Kakao Maps API로 참여자 위치·역 마커, 이동 경로(Polyline), 장소 검색과 좋아요 토글을 포함한 약속 장소 지도 구현',
-      '카카오 SDK 로드를 커스텀 훅으로 분리하고 지도·마커·위치 상태를 Zustand store로 나눠 관리',
-      '로그인 여부와 약속 생성자 여부에 따라 접근을 제어하는 라우트 래퍼를 구현해 역할별(주최자/참여자) 페이지 보호',
-      '약속, 사용자, 시간표 데이터를 포괄하는 API 스펙을 직접 정의하고 생성부터 확정까지 약속 플로우 API 연결',
-      '약속 생성·참여 페이지와 공유 링크 초대 모달 제작',
+      '장소 좋아요를 누를 때마다 지도·장소 목록 전체가 다시 그려지고 주변 장소 검색이 다시 실행되던 문제를, 좋아요 버튼 분리, Zustand useShallow 선택 구독, 중심역 값 기준 메모이제이션으로 해결',
+      'Vercel 배포 후 중첩 경로(/promise/:id/...)에서 새로고침하면 404와 모듈 MIME 오류가 나던 문제를 SPA rewrites와 Vite base 절대 경로로 해결',
+      '카카오 LatLng 객체의 내부 필드(Ma/La)에 의존해 위·경도가 뒤바뀌거나 SDK 버전에 따라 깨질 수 있던 좌표를 { Ma: 위도, La: 경도 } 일반 객체로 통일해 저장',
+      'Kakao Maps API로 참여자 출발역·중간역 마커, 이동 경로(Polyline), 주변 장소 검색과 좋아요 토글을 포함한 약속 장소 지도 구현',
+      '로그인 여부와 약속 생성자 여부로 접근을 제어하는 라우트 래퍼로 주최자·참여자 페이지 보호',
+      '약속·사용자·시간표 API 스펙을 직접 정의하고 생성부터 확정까지 약속 플로우 API 연결',
     ],
     links: {
       site: 'https://promeet-six.vercel.app',
