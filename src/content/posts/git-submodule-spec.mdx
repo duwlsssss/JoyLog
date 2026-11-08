@@ -80,9 +80,8 @@ $ git ls-tree HEAD spec
 
 포인터의 변화를 따라가 보니 경위가 보였다.
 
-1. 누군가 backend 안의 `spec/` 디렉터리에서 스펙을 고치고 **커밋했다.** spec 원격에는 push하지 않았다.
-2. 기능 코드를 커밋하면서 `git add .`에 바뀐 포인터가 같이 들어갔다.
-3. 그 기능 브랜치가 merge되면서, 그 사이 자동 갱신 PR로 올려 둔 `main`의 정상 포인터를 **덮어썼다.**
+1. 누군가 기능 브랜치에서 backend 안의 `spec/` 디렉터리에서 스펙을 고치고 **커밋했다.** spec 원격에는 push하지 않았다.
+2. 그 기능 브랜치가 merge되면서, 그 사이 자동 갱신 PR로 올려 둔 `main`의 정상 포인터를 **덮어썼다.**
 
 그 뒤로 spec 레포에 PR이 merge될 때마다 `update-consumers`는 갱신 PR을 만들려고 backend를 `submodules: true`로 checkout했고,
 깨진 포인터 때문에 `upload-pack: not our ref` 에러가 나면서 실패했다. 갱신 PR은 만들어지지 않았고, backend는 그대로 옛 스펙에 머물렀다.
@@ -169,31 +168,7 @@ jobs:
     secrets: inherit
 ```
 
-## 해결 2. 스펙과 실제 응답을 비교하는 계약 테스트
-
-"스펙이 옛날 상태여도 드러날 방법이 없었다"는 문제를 풀려고 contract test를 붙였다.
-`openapi.yaml`을 직접 파싱하고, 실제 API 응답 body를 `jsonschema`로 대조한다.
-
-- 스펙에 있는 경로가 앱에 없으면 실패
-- 응답 status code가 스펙에 정의돼 있지 않으면 실패
-- 응답 body가 스펙 스키마를 위반하면 실패
-
-붙이자마자 실제로 어긋난 부분을 하나 확인했다. 
-최고 신용등급 유저는 "다음 등급"이 없어서 백엔드가 `null`을 응답하는데, 스펙은 `null`을 허용하지 않았다.
-
-참고로 OpenAPI 3.0에서는 `$ref` 옆에 붙인 키워드가 무시된다. 그래서 `$ref`에 `nullable`을 붙이려면 `allOf`로 감싸야 한다.
-
-```yaml
-next_grade:
-  allOf: [{ $ref: '#/components/schemas/CreditGrade' }]
-  nullable: true
-```
-
-CI에서 spec 파일을 못 받았을 때 테스트가 **skip되면 안 된다**는 점도 리뷰에서 짚었다. 
-skip이면 계약 테스트 전체가 초록불이 되고, 또 조용히 드리프트를 놓친다. 
-그래서 로컬에서는 skip하고, CI에서는 실패하게 했다.
-
-## 해결 3. 포인터를 잘못 옮기는 PR을 CI에서 막기
+## 해결 2. 포인터를 잘못 옮기는 PR을 CI에서 막기
 
 이제 상위 레포 PR에서 포인터가 바뀌면 검사해야 한다. 
 
@@ -267,7 +242,7 @@ spec feature/x:        X            ← 상위 레포 main의 base 포인터
 
 수정 전 스크립트로 이 테스트를 돌리면 7번째 경우만 실패한다. 테스트가 그 버그를 실제로 잡는다는 걸 확인하고 넣었다.
 
-## 해결 4. 필수 체크로 걸어야 진짜 막힌다
+## 해결 3. 필수 체크로 걸어야 진짜 막힌다
 
 CI가 실패해도 `main`에 보호 규칙이 없으면 merge 버튼은 그냥 눌린다. ruleset으로 테스트 체크를 필수로 지정했다.
 
