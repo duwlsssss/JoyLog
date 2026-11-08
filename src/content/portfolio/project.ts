@@ -13,7 +13,10 @@ import {
   HWP_REPORT_TIDY_DETAIL,
 } from '@/content/portfolio/project-detail/HwpReportTidy';
 import { JOYLOG_CASES, JOYLOG_DETAIL } from '@/content/portfolio/project-detail/JoyLog';
-import { KIMS_BC_OFFICE_DETAIL } from '@/content/portfolio/project-detail/KimsBcOffice';
+import {
+  KIMS_BC_OFFICE_CASES,
+  KIMS_BC_OFFICE_DETAIL,
+} from '@/content/portfolio/project-detail/KimsBcOffice';
 import { PEEKLE_CASES, PEEKLE_DETAIL } from '@/content/portfolio/project-detail/Peekle';
 import { PROMEET_CASES, PROMEET_DETAIL } from '@/content/portfolio/project-detail/Promeet';
 import { SHOWTIME_CASES, SHOWTIME_DETAIL } from '@/content/portfolio/project-detail/Showtime';
@@ -265,8 +268,11 @@ export const PROJECTS: Project[] = [
       'Styled-components',
       'Vite',
     ],
+    cases: KIMS_BC_OFFICE_CASES,
     achievements: [
-      '압축 GLB 모델과 three-stdlib Water 셰이더, 그림자를 적용해 사무실 외부·내부 3D 씬을 구성하고 진입 여부에 따라 씬 전환',
+      '214MB 사무실 3D 모델을 분석해 Draco 압축·텍스처 변환·메시 단순화로 10.9MB(-95%)로 줄이고 체감 로딩을 분 단위에서 약 20초로 단축',
+      '카카오톡·라인·삼성 인터넷 인앱 브라우저에서 모바일 명함 링크가 열리지 않던 문제를 외부 브라우저 전환으로 해결하고, html2canvas로 명함 앞·뒷면 이미지 저장 구현',
+      'three-stdlib Water 셰이더와 그림자를 적용해 사무실 외부·내부 3D 씬을 구성하고 진입 여부에 따라 씬 전환',
       'Rapier 물리 엔진(RigidBody·CapsuleCollider)으로 카메라 방향 기준 WASD·방향키 이동 캐릭터와 3인칭 추적 카메라 구현',
       'kinematic 이동 NPC와 말풍선 대화·선택지 분기로 서비스 이용 흐름을 안내하는 온보딩 구현',
       'GSAP으로 인트로 진입, 모니터 클릭 시 포커스, 로그아웃 시 재시작 등 카메라 연출 구현',
