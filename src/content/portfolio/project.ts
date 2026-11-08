@@ -1,7 +1,7 @@
 import type { Project } from '@/types/project';
 
 import { BETALAB_CASES, BETALAB_DETAIL } from '@/content/portfolio/project-detail/Betalab';
-import { CODENEWS_DETAIL } from '@/content/portfolio/project-detail/CodeNews';
+import { CODENEWS_CASES, CODENEWS_DETAIL } from '@/content/portfolio/project-detail/CodeNews';
 import {
   FINANCE_SIMULATER_CASES,
   FINANCE_SIMULATER_DETAIL,
@@ -190,11 +190,12 @@ export const PROJECTS: Project[] = [
     period: '2025.04 ~ 2025.05',
     description: '웹 기초 학습 및 게임형 교육 서비스',
     tags: ['JavaScript', 'HTML', 'CSS', 'CodeMirror', 'Vite'],
+    cases: CODENEWS_CASES,
     achievements: [
-      '프레임워크 없이 Component 베이스 클래스와 Observer 패턴(마이크로태스크 배치 업데이트) 기반 상태 관리 구조 직접 설계',
+      '배포본에서 아티클·학습 데이터를 못 불러오던 문제를, fetch 상대 경로가 페이지 URL 기준으로 풀리고 src/가 빌드에 포함되지 않는 원인을 찾아 JSON을 모듈 import로 번들에 포함시켜 해결',
+      '프레임워크 없이 Component 베이스 클래스와 Observer 기반 상태 관리를 직접 설계하고, 연속 변경은 마이크로태스크로 모아 한 번만 렌더링, 배열·중첩 객체 변경도 감지하도록 개선',
       'History API 기반 SPA 라우터(동적 파라미터, 404 fallback)와 풀이 진행도에 따라 접근을 제한하는 Protected Route 구현',
       'CodeMirror 편집기와 iframe 실시간 미리보기를 연결하고, HTML은 DOM 파싱 비교·CSS는 공백·따옴표 정규화 비교로 정답 판별',
-      '게임 종료 후 심화 학습으로 이어지는 UX flow 설계',
     ],
     links: {
       site: 'https://web-study-game.vercel.app/',
