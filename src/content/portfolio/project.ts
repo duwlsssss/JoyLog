@@ -13,7 +13,7 @@ import {
 } from '@/content/portfolio/project-detail/HwpReportTidy';
 import { JOYLOG_CASES, JOYLOG_DETAIL } from '@/content/portfolio/project-detail/JoyLog';
 import { KIMS_BC_OFFICE_DETAIL } from '@/content/portfolio/project-detail/KimsBcOffice';
-import { PEEKLE_DETAIL } from '@/content/portfolio/project-detail/Peekle';
+import { PEEKLE_CASES, PEEKLE_DETAIL } from '@/content/portfolio/project-detail/Peekle';
 import { PROMEET_DETAIL } from '@/content/portfolio/project-detail/Promeet';
 import { SHOWTIME_DETAIL } from '@/content/portfolio/project-detail/Showtime';
 
@@ -115,13 +115,16 @@ export const PROJECTS: Project[] = [
     period: '2025.08 ~ 2025.11',
     description: '시니어 친화적 UX를 적용한 이벤트 큐레이션 및 커뮤니티 서비스',
     tags: ['Next.js', 'TypeScript', 'Ky', 'Zod', 'TanStack Query', 'Zustand', 'Tailwind CSS'],
+    cases: PEEKLE_CASES,
     achievements: [
-      'Ky 커스텀 인스턴스 기반 공통 fetcher를 설계해 베이스 URL·타임아웃 관리와 401(토큰 삭제·로그인 리다이렉트), 404(notFound) 에러 처리를 한 곳에서 수행',
-      'Zod 스키마로 API 응답을 런타임에 검증하고 z.infer로 응답 타입을 추론해 서버 응답 불일치를 조기에 감지',
-      '클라이언트(cookies-next)와 서버(next/headers) 환경별 인증 fetcher를 분리해 서버 컴포넌트에서도 인증 API 호출 지원',
-      '카테고리·기간·지역·가격 4종 필터를 Query String과 동기화해 새로고침·링크 공유 시에도 검색 상태 유지',
-      'S3 Presigned URL 기반 클라이언트 직접 업로드를 구현하고 AbortController로 진행 중인 업로드 취소 지원',
-      '500ms 지연 로더로 짧은 로딩에서 스피너가 깜빡이지 않도록 개선',
+      '찜 버튼이 서버 응답 전까지 바뀌지 않던 문제를, 낙관적 업데이트를 실제 캐시 구조({ event })에 맞춰 고쳐 해결 (cancelQueries로 덮어쓰기 방지, 실패 시 스냅샷 롤백, 완료 후 상세·목록 무효화)',
+      '없는 이벤트 주소에서 404 페이지 대신 클라이언트 오류가 나던 문제를, eventId 양의 정수 검증과 공통 fetcher의 HTTP 404 → notFound() 변환으로 해결',
+      "'강남,서초,양재'처럼 쉼표가 들어간 지역 그룹 값이 개별 지역과 섞여 선택·해제와 선택된 필터 칩 표시가 어긋나던 문제를, 그룹을 토큰 단위로 비교하고 칩은 그룹 단위로 묶어 표시하도록 수정 (필터 상태는 Query String과 동기화해 새로고침·공유 시 유지)",
+      '한글 입력 중 Enter를 누르면 조합 중인 글자까지 검색되던 문제를 isComposing 검사로 수정',
+      'Ky 공통 fetcher와 Zod 응답 스키마로 베이스 URL·타임아웃·401 처리와 런타임 응답 검증을 한 곳에서 수행하고, 클라이언트(cookies-next)·서버(next/headers)용 인증 fetcher를 분리',
+      'S3 Presigned URL로 프로필 이미지를 브라우저에서 S3에 직접 업로드하고, 업로드마다 AbortController를 id로 관리해 개별 취소 지원 (취소 시 미리보기 Object URL 해제로 메모리 정리)',
+      '백엔드 응답마다 fileUrl·publicUrl·key 중 내려오는 필드와 형식(절대·프로토콜 상대·경로)이 달라도 최종 이미지 주소를 https 절대 URL로 정규화하는 유틸 작성',
+      '짧은 로딩에서 스피너가 깜빡이지 않도록 500ms가 지나야 표시하는 지연 로더를 만들어 Suspense fallback에 적용',
     ],
     links: {
       github: 'https://github.com/Team-Peekle/peekle-frontend-next',
