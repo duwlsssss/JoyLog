@@ -282,6 +282,7 @@ export const PROJECTS: Project[] = [
       '방문자 명함을 3D 갤러리 공간에 전시하고 세션별 필터와 페이지 넘김, GSAP 카드 등장 효과 구현',
     ],
     links: {
+      github: 'https://github.com/duwlsssss/KBO_3dOffice',
       video: 'https://www.youtube.com/watch?v=C984XiIuqX4',
     },
     detail: KIMS_BC_OFFICE_DETAIL,
