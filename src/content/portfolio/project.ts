@@ -2,6 +2,7 @@ import type { Project } from '@/types/project';
 
 import { BETALAB_CASES, BETALAB_DETAIL } from '@/content/portfolio/project-detail/Betalab';
 import { CODENEWS_CASES, CODENEWS_DETAIL } from '@/content/portfolio/project-detail/CodeNews';
+import { DOPAMING_CASES } from '@/content/portfolio/project-detail/Dopaming';
 import {
   FINANCE_SIMULATER_CASES,
   FINANCE_SIMULATER_DETAIL,
@@ -237,11 +238,13 @@ export const PROJECTS: Project[] = [
     description:
       '효율적인 수강생 관리와 소통을 위한 가상의 학습 플랫폼 회사 도파밍의 인트라넷 서비스',
     tags: ['HTML', 'CSS', 'JavaScript', 'Vite'],
+    cases: DOPAMING_CASES,
     achievements: [
-      '출퇴근, 외출, 복귀 등 다양한 상태값을 다루는 실시간 출결 관리 시스템 및 모달 인터랙션 구현',
-      '휴가/공가 신청 폼의 복합 유효성 검사(Validation) 로직을 통해 데이터 무결성 확보',
-      '프로필 이미지 미리보기 및 비동기 업로드 처리 등 실무적인 편의 기능 개발',
-      '관리자 전용 대시보드(직원 관리, 부재 승인)와 사용자 페이지 간의 권한 분리 및 데이터 연동 최적화',
+      '사용자 휴가/공가 신청·수정·삭제·필터링을 구현하고, 수정·삭제 후 페이지 전체를 새로고침하던 방식을 해당 항목과 잔여 휴가 요약만 다시 그리도록 개선',
+      '프로필 수정 시 Firebase set()이 사용자 노드 전체를 덮어써 폼에 없는 필드(잔여 휴가 등)가 사라지던 문제를 update()로 바꾸고, 빈 입력은 기존 값을 유지하도록 수정',
+      '프로필 이름·사진 변경을 커스텀 이벤트로 알려 새로고침 없이 헤더에 반영',
+      '로그인·프로필·휴가 신청 폼의 유효성 검사를 utils로 분리해 공통화하고 필드별 오류 메시지 표시',
+      '동적 경로를 지원하는 라우터와 not-found 페이지, 사용자 홈·공지 목록·상세 페이지 구현',
     ],
     links: {
       github: 'https://github.com/duwlsssss/DOPAMING',
