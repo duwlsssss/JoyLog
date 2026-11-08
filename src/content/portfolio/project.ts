@@ -11,7 +11,7 @@ import {
   HWP_REPORT_TIDY_CASES,
   HWP_REPORT_TIDY_DETAIL,
 } from '@/content/portfolio/project-detail/HwpReportTidy';
-import { JOYLOG_DETAIL } from '@/content/portfolio/project-detail/JoyLog';
+import { JOYLOG_CASES, JOYLOG_DETAIL } from '@/content/portfolio/project-detail/JoyLog';
 import { KIMS_BC_OFFICE_DETAIL } from '@/content/portfolio/project-detail/KimsBcOffice';
 import { PEEKLE_DETAIL } from '@/content/portfolio/project-detail/Peekle';
 import { PROMEET_DETAIL } from '@/content/portfolio/project-detail/Promeet';
@@ -67,12 +67,13 @@ export const PROJECTS: Project[] = [
     period: '2026.02 ~ 2026.03',
     description: 'Next.js 기반의 풀스택 개발 블로그',
     tags: ['Next.js 16', 'React 19', 'TypeScript', 'Drizzle ORM', 'PostgreSQL', 'Tailwind CSS v4'],
+    cases: JOYLOG_CASES,
     achievements: [
-      'MDX 기반 포스트 시스템 구축 및 코드 하이라이팅, 이미지 줌, 코드 복사 등 커스텀 MDX 컴포넌트 구현',
-      'Query String 기반 태그 필터링 및 페이지네이션 구현',
-      'Drizzle ORM & PostgreSQL 기반 조회수 추적 시스템 구축 (upsert 패턴, HMR 시 DB 커넥션 중복 방지)',
-      '동적 메타데이터, OG 이미지, sitemap/robots 자동화를 통한 SEO 체계 구축 및 shadcn/ui 커스터마이징을 통한 반응형 디자인과 다크모드 구현',
-      'Lefthook 기반 Git Hooks 자동화로 코드 품질 유지 체계 구축 (lint·타입체크, commitlint, 빌드 검증)',
+      '서버 렌더링 때마다 오르던 조회수를 클라이언트 마운트 시 서버 액션으로 기록하도록 옮기고, 24시간 httpOnly 쿠키로 새로고침·재방문 중복 집계 차단 (봇·prefetch 제외, 존재하는 slug만 기록)',
+      '태그·페이지 필터 URL이 홈 목록과 중복 색인되지 않도록 필터 페이지는 noindex·follow, 홈·포스트·포트폴리오에는 canonical 지정 (noindex 페이지엔 canonical을 두지 않아 신호 충돌 방지)',
+      '공백 없는 긴 인라인 코드가 모바일에서 화면 밖으로 넘치던 문제를 wrap-anywhere로 수정하고, sticky를 깨뜨리는 hidden 대신 html·body에 overflow-x: clip 적용',
+      'MDX 포스트 시스템 구축 (rehype-pretty-code 하이라이팅, 이미지 줌, 코드 복사, 구조도·GFM 표), 언어 미지정 코드 블록에 인라인 코드 스타일이 입혀지던 문제를 defaultLang으로 수정',
+      'Lefthook 기반 Git Hooks로 lint·타입체크, commitlint, 빌드 검증 자동화',
     ],
     links: {
       site: 'https://joy.me.kr',
