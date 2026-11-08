@@ -75,7 +75,7 @@ export const PROJECTS: Project[] = [
       'Lefthook 기반 Git Hooks 자동화로 코드 품질 유지 체계 구축 (lint·타입체크, commitlint, 빌드 검증)',
     ],
     links: {
-      site: 'https://joy-log-kappa.vercel.app',
+      site: 'https://joy.me.kr',
       github: 'https://github.com/duwlsssss/JoyLog.git',
     },
     detail: JOYLOG_DETAIL,
