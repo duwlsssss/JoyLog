@@ -13,6 +13,12 @@ export default function Header() {
         </Link>
         <div className="flex items-center gap-4">
           <Link
+            href={ROUTES.RESUME}
+            className="text-muted-foreground hover:text-primary text-sm font-semibold transition-colors"
+          >
+            Resume
+          </Link>
+          <Link
             href={ROUTES.PORTFOLIO}
             className="text-muted-foreground hover:text-primary text-sm font-semibold transition-colors"
           >

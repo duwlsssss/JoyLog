@@ -26,6 +26,7 @@ React, Next.js, TypeScript 등 웹 프론트엔드 기술을 주로 다룹니다
 ## 페이지
 
 - [홈](${SITE_URL}): 전체 포스트 목록
+- [이력서](${SITE_URL}/resume): 학력, 기술, 활동, 수상 이력
 - [포트폴리오](${SITE_URL}/portfolio): 프로젝트 소개
 
 ## 포스트 목록
