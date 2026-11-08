@@ -15,7 +15,7 @@ import { JOYLOG_CASES, JOYLOG_DETAIL } from '@/content/portfolio/project-detail/
 import { KIMS_BC_OFFICE_DETAIL } from '@/content/portfolio/project-detail/KimsBcOffice';
 import { PEEKLE_CASES, PEEKLE_DETAIL } from '@/content/portfolio/project-detail/Peekle';
 import { PROMEET_CASES, PROMEET_DETAIL } from '@/content/portfolio/project-detail/Promeet';
-import { SHOWTIME_DETAIL } from '@/content/portfolio/project-detail/Showtime';
+import { SHOWTIME_CASES, SHOWTIME_DETAIL } from '@/content/portfolio/project-detail/Showtime';
 
 export const PROJECTS: Project[] = [
   {
@@ -217,11 +217,12 @@ export const PROJECTS: Project[] = [
       'Vite',
       'Styled-components',
     ],
+    cases: SHOWTIME_CASES,
     achievements: [
-      '반복 일정(반복 주기, 종료일) 계산 로직을 설계하고, 반복 일정 수정 시 이전 회차 종료일 조정과 이후 회차 재생성 처리',
-      'Redux 기반 상태 관리와 Redux Thunk 비동기 처리를 구현하고 Redux-Persist로 새로고침 시에도 일정 데이터 유지',
-      'react-hook-form과 Zod로 일정 추가·수정 폼을 검증하고 사용자가 오늘 이전 일정을 수정·삭제하지 못하도록 제한',
-      'ErrorBoundary와 Suspense를 적용해 데이터 로딩·에러 상태를 선언적으로 처리',
+      '그룹 ID 없이 필드 비교로 묶던 반복 일정에서, 한 회차 수정·삭제 시 다른 직원·다른 반복 일정까지 영향을 받던 문제를 판별 조건 보강(직원 ID, 반복 종료일)과 이전 회차 종료일 조정을 통한 그룹 분할로 해결',
+      '반복 일정(주기, 종료일) 생성 로직을 설계하고, 전체 수정 시 시작일 변경 여부에 따라 기준 회차를 정해 재생성',
+      'Redux Thunk로 Supabase 일정 CRUD를 처리하고 Redux-Persist로 새로고침 시에도 일정 데이터 유지',
+      'react-hook-form과 Zod로 일정 추가·수정 폼을 검증하고, 일반 직원은 오늘 이전 일정을 추가·수정·삭제하지 못하도록 제한',
       '기술 선택 배경과 구조 변경 과정을 발표하여 멘토 최고 점수 획득 및 타 팀으로부터 구조 공유 요청',
     ],
     links: {

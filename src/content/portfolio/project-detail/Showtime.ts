@@ -1,4 +1,21 @@
-import type { ProjectDetail } from '@/types/project';
+import type { ProjectCase, ProjectDetail } from '@/types/project';
+
+export const SHOWTIME_CASES: ProjectCase[] = [
+  {
+    title:
+      '반복 일정 한 회차를 수정·삭제하면 다른 회차나 다른 직원 일정까지 영향을 받던 문제를, 반복 그룹 판별 조건 보강과 그룹 분할로 해결',
+    problem:
+      '반복 일정의 한 회차를 수정·삭제하면 이후 전체 수정·삭제 범위가 어긋날 수 있었고, 전체 수정 시에는 클릭한 회차가 새 시작일이 되어 그 전 회차들이 사라질 수 있었음',
+    cause:
+      '회차마다 행을 따로 저장하고 그룹 ID 없이 카테고리·시간·반복 주기·근무 유형이 같은지로 같은 반복인지 판별. 이 조건에 직원 ID와 반복 종료일이 빠져 다른 직원이나 다른 반복의 일정도 같은 그룹으로 잡힐 수 있었고, 전체 수정은 클릭한 회차를 시작점으로 다시 생성했음',
+    decision:
+      '그룹 ID를 추가하려면 스키마를 바꿔야 해서, 판별 조건을 보강하고 반복 종료일을 그룹 경계로 쓰기로 함. 한 회차만 바꾸면 이전 회차들의 종료일을 그 전날로 당겨 별도 그룹으로 나눔',
+    action:
+      '판별 조건에 user_id와 repeat_end_date(KST 날짜 기준 비교)를 추가. 전체 수정은 시작일이 바뀌지 않았으면 기존 첫 회차 기준으로 재생성. 단일 수정·삭제 시에는 이전 회차의 repeat_end_date를 조정하고, 반복 설정이 바뀌었으면 해당 회차부터 새 반복으로 재생성',
+    result:
+      '한 회차를 고쳐도 이전 회차는 그대로 남고, 전체 수정·삭제가 해당 직원의 해당 반복에만 적용됨',
+  },
+];
 
 export const SHOWTIME_DETAIL: ProjectDetail = {
   images: [
